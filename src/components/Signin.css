@@ -22,16 +22,17 @@ body {
   text-align: center;
 }
 
-.credit-text {
-  position: fixed; /* 화면 하단에 고정 */
-  bottom: 10px;
+/* Footer.css */
+footer {
+  position: fixed;
   right: 10px;
-  font-size: 0.8rem;
-  color: rgba(255, 255, 255, 0.7); /* 흰색, 약간 투명하게 */
-  background-color: rgba(0, 0, 0, 0.4); /* 검정색 배경, 반투명 */
+  bottom: 10px;
+  background-color: rgba(255, 255, 255, 0.8); /* 약간 투명한 배경 */
   padding: 5px 10px;
   border-radius: 4px;
-  text-decoration: none;
+  font-size: 0.8rem;
+  color: #333;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .link-text {
