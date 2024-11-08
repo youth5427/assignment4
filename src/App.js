@@ -24,22 +24,18 @@
 
 // export default App;
 
+
 // src/App.js
-import React from "react";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import Signin from "./components/Signin";
-import Home from "./components/Home";
+import React from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import Signin from './components/Signin';
+import Home from './components/Home';
 
 function App() {
   return (
     <Router>
       <Routes>
         <Route path="/signin" element={<Signin />} />
-        <Route path="/home" element={<Home />} />{" "}
-        {/* 로그인 후 이동할 홈 페이지 */}
-      </Routes>
-    </Router>
-  );
-}
-
-export default App;
+        <Route path="/home" element={<Home />} /> {/* 로그인 후 이동할 홈 페이지 */}
+in" element={<SignIn />} />
+xport default App;
