@@ -1,12 +1,12 @@
 import React, { useEffect, useState, useRef } from "react";
 import styled from "styled-components";
 import axios from "axios";
+import LikeButton from "./LikeButton"; // LikeButton 가져오기
 
-// 스타일 정의
 const MovieRowContainer = styled.div`
   padding: 20px;
-  margin: 0 50px; /* 좌우 여백 추가 */
-  position: relative; /* 버튼 위치를 위한 상대적 위치 */
+  margin: 0 50px;
+  position: relative;
 `;
 
 const Title = styled.h2`
@@ -16,7 +16,7 @@ const Title = styled.h2`
 const MovieThumbnails = styled.div`
   display: flex;
   gap: 15px;
-  overflow: hidden; /* 스크롤 영역 숨기기 */
+  overflow: hidden;
   padding: 10px 0;
   height: 250px;
 `;
@@ -28,31 +28,10 @@ const MovieThumbnailWrapper = styled.div`
 const MovieThumbnail = styled.img`
   width: 150px;
   border-radius: 5px;
-  transition: transform 0.3s ease; /* 부드러운 확대 효과 추가 */
+  transition: transform 0.3s ease;
 
   &:hover {
-    transform: scale(1.1); /* 마우스 올렸을 때 확대 */
-  }
-`;
-
-const LikeButton = styled.button`
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  background-color: ${(props) =>
-    props.isLiked ? "rgba(255, 255, 0, 1)" : "rgba(255, 255, 255, 0.8)"};
-  border: none;
-  border-radius: 50%;
-  width: 30px;
-  height: 30px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  font-size: 1rem;
-
-  &:hover {
-    background-color: rgba(255, 255, 255, 1);
+    transform: scale(1.1);
   }
 `;
 
@@ -66,18 +45,17 @@ const ScrollButton = styled.button`
   width: 20px;
   height: 40px;
   cursor: pointer;
-  z-index: 1;
 
   &:hover {
     background-color: rgba(0, 0, 0, 0.7);
   }
 
   &.left {
-    left: -10px; /* 왼쪽 버튼 위치 */
+    left: -10px;
   }
 
   &.right {
-    right: -10px; /* 오른쪽 버튼 위치 */
+    right: -10px;
   }
 `;
 
@@ -89,24 +67,18 @@ function MovieRow({
   movies: propMovies,
 }) {
   const [movies, setMovies] = useState([]);
-  const [likedMovies, setLikedMovies] = useState([]);
   const rowRef = useRef(null);
 
   useEffect(() => {
     const fetchMovies = async () => {
       if (!fetchUrl) {
-        // fetchUrl이 없으면 props로 전달된 movies 사용
         setMovies(propMovies || []);
         return;
       }
 
       try {
         const response = await axios.get(fetchUrl, {
-          params: {
-            api_key: userPassword,
-            language: "ko-KR",
-            ...params,
-          },
+          params: { api_key: userPassword, language: "ko-KR", ...params },
         });
         setMovies(response.data.results);
       } catch (error) {
@@ -114,31 +86,8 @@ function MovieRow({
       }
     };
 
-    const fetchLikedMovies = () => {
-      const storedMovies =
-        JSON.parse(localStorage.getItem("likedMovies")) || [];
-      setLikedMovies(storedMovies);
-    };
-
     fetchMovies();
-    fetchLikedMovies();
   }, [fetchUrl, userPassword, params, propMovies]);
-
-  const handleLike = (movie) => {
-    const isAlreadyLiked = likedMovies.some((m) => m.id === movie.id);
-
-    if (!isAlreadyLiked) {
-      const updatedMovies = [...likedMovies, movie];
-      localStorage.setItem("likedMovies", JSON.stringify(updatedMovies));
-      setLikedMovies(updatedMovies);
-      alert(`${movie.title}이(가) 저장되었습니다!`);
-    } else {
-      const updatedMovies = likedMovies.filter((m) => m.id !== movie.id);
-      localStorage.setItem("likedMovies", JSON.stringify(updatedMovies));
-      setLikedMovies(updatedMovies);
-      alert(`${movie.title}이(가) 저장 목록에서 제거되었습니다.`);
-    }
-  };
 
   const handleScroll = (direction) => {
     if (rowRef.current) {
@@ -154,20 +103,20 @@ function MovieRow({
         &lt;
       </ScrollButton>
       <MovieThumbnails ref={rowRef}>
-        {movies.map((movie) => {
-          const isLiked = likedMovies.some((m) => m.id === movie.id);
-          return (
-            <MovieThumbnailWrapper key={movie.id}>
-              <MovieThumbnail
-                src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
-                alt={movie.title}
-              />
-              <LikeButton isLiked={isLiked} onClick={() => handleLike(movie)}>
-                ❤
-              </LikeButton>
-            </MovieThumbnailWrapper>
-          );
-        })}
+        {movies.map((movie) => (
+          <MovieThumbnailWrapper key={movie.id}>
+            <MovieThumbnail
+              src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
+              alt={movie.title}
+            />
+            <LikeButton
+              movie={movie}
+              style={{ position: "absolute", top: "10px", right: "10px" }}
+              size="30px"
+              fontSize="1rem"
+            />
+          </MovieThumbnailWrapper>
+        ))}
       </MovieThumbnails>
       <ScrollButton className="right" onClick={() => handleScroll("right")}>
         &gt;

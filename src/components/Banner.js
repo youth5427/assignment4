@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
+import LikeButton from "./LikeButton"; // LikeButton 컴포넌트 가져오기
 
-// 스타일 정의
 const BannerContainer = styled.div`
   position: relative;
   height: 500px;
   color: white;
-  margin: 0 50px; /* 좌우 여백 추가 */
+  margin: 0 50px;
 `;
 
 const BannerImage = styled.img`
@@ -14,13 +14,13 @@ const BannerImage = styled.img`
   height: 100%;
   object-fit: cover;
   position: absolute;
-  border-radius: 8px; /* 선택 사항: 배너에 둥근 테두리를 추가 */
+  border-radius: 8px;
 `;
 
 const BannerContent = styled.div`
   position: absolute;
-  bottom: 50px; /* 아래쪽에서 50px 패딩 */
-  left: 20px; /* 좌측에서 약간 띄움 */
+  bottom: 50px;
+  left: 20px;
   z-index: 2;
   color: white;
 `;
@@ -28,19 +28,6 @@ const BannerContent = styled.div`
 const Title = styled.h2`
   margin-bottom: 10px;
   font-size: 2rem;
-`;
-
-const Overview = styled.p`
-  margin-bottom: 20px;
-  font-size: 1rem;
-  line-height: 1.4;
-  color: #ddd;
-  max-width: 40%;
-`;
-
-const ButtonContainer = styled.div`
-  display: flex;
-  gap: 10px;
 `;
 
 const Button = styled.button`
@@ -56,7 +43,7 @@ const Button = styled.button`
     color: white;
   }
 
-  &:last-child {
+  &:nth-child(2) {
     background-color: rgba(109, 109, 110, 0.7);
     color: white;
   }
@@ -65,18 +52,31 @@ const Button = styled.button`
     opacity: 0.9;
   }
 `;
+const Overview = styled.p`
+  margin-bottom: 20px;
+  font-size: 1rem;
+  line-height: 1.4;
+  color: #ddd;
+  max-width: 40%;
+`;
+
+const ButtonContainer = styled.div`
+  display: flex;
+  gap: 10px;
+  align-items: center;
+`;
 
 function Banner({ featuredMovie }) {
   const [isSmallScreen, setIsSmallScreen] = useState(false);
 
   useEffect(() => {
     const handleResize = () => {
-      setIsSmallScreen(window.innerWidth < 768); // 창 너비가 768px 이하인지 확인
+      setIsSmallScreen(window.innerWidth < 768);
     };
 
-    handleResize(); // 초기 실행
-    window.addEventListener("resize", handleResize); // 리스너 추가
-    return () => window.removeEventListener("resize", handleResize); // 리스너 정리
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   if (!featuredMovie) return null;
@@ -103,11 +103,12 @@ function Banner({ featuredMovie }) {
       />
       <BannerContent>
         <Title>{featuredMovie.title}</Title>
-        {/* overview는 작은 화면에서 생략 */}
         {!isSmallScreen && <Overview>{featuredMovie.overview}</Overview>}
         <ButtonContainer>
           <Button onClick={handlePlayClick}>재생</Button>
           <Button onClick={handleDetailsClick}>상세 정보</Button>
+          {/* LikeButton 컴포넌트 활용 */}
+          <LikeButton movie={featuredMovie} size="40px" fontSize="1.2rem" />
         </ButtonContainer>
       </BannerContent>
     </BannerContainer>
