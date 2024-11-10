@@ -6,9 +6,11 @@
   color: white;
   padding: 20px;
   position: fixed;
-  width: 100%;
   top: 0;
-  z-index: 1000;
+  left: 0;
+  width: 100%; /* 화면 전체 너비 */
+  z-index: 1000; /* 상단 고정 */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* 헤더 하단 그림자 */
 }
 
 .header-content {
@@ -16,17 +18,14 @@
   justify-content: space-between;
   align-items: center;
   width: 100%;
-}
-
-.logo {
-  font-size: 1.5rem;
-  font-weight: bold;
+  max-width: 1200px; /* 컨텐츠의 최대 너비 */
+  margin: 0 auto; /* 컨텐츠 가운데 정렬 */
 }
 
 .nav-links {
   list-style: none;
   display: flex;
-  gap: 15px;
+  gap: 20px;
 }
 
 .nav-links li {
@@ -36,9 +35,32 @@
 .nav-links a {
   color: white;
   text-decoration: none;
-  font-size: 1rem;
+  font-size: 1.1rem;
 }
 
 .nav-links a:hover {
   color: #1db954;
+}
+
+.logout-button {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.1rem;
+  cursor: pointer;
+}
+
+.logout-button:hover {
+  color: white;
+}
+
+.left-nav {
+  display: flex;
+  gap: 20px; /* 왼쪽 내비게이션 아이템 간격 */
+  align-items: center;
+}
+
+.right-nav {
+  display: flex;
+  align-items: center;
 }

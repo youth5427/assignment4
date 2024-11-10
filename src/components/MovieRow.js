@@ -1,33 +1,59 @@
 import React, { useEffect, useState } from "react";
-import "./MovieRow.css";
+import styled from "styled-components";
+import axios from "axios";
 
-function MovieRow({ title, fetchUrl }) {
+// 스타일 정의
+const MovieRowContainer = styled.div`
+  padding: 20px;
+  margin: 0 50px; /* 좌우 여백 추가 */
+`;
+
+const MovieThumbnails = styled.div`
+  display: flex;
+  gap: 10px;
+  overflow-x: scroll;
+`;
+
+const MovieThumbnail = styled.img`
+  width: 150px;
+  border-radius: 5px;
+`;
+
+function MovieRow({ title, fetchUrl, userPassword, params = {} }) {
   const [movies, setMovies] = useState([]);
 
   useEffect(() => {
     const fetchMovies = async () => {
-      const response = await fetch(fetchUrl);
-      const data = await response.json();
-      setMovies(data.results);
+      try {
+        const response = await axios.get(fetchUrl, {
+          params: {
+            api_key: userPassword,
+            language: "ko-KR",
+            ...params,
+          },
+        });
+        setMovies(response.data.results);
+      } catch (error) {
+        console.error(`Error fetching movies for ${title}:`, error);
+      }
     };
 
     fetchMovies();
-  }, [fetchUrl]);
+  }, [fetchUrl, userPassword, params]);
 
   return (
-    <div className="movie-row">
+    <MovieRowContainer>
       <h2>{title}</h2>
-      <div className="movie-thumbnails">
+      <MovieThumbnails>
         {movies.map((movie) => (
-          <img
+          <MovieThumbnail
             key={movie.id}
             src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
             alt={movie.title}
-            className="movie-thumbnail"
           />
         ))}
-      </div>
-    </div>
+      </MovieThumbnails>
+    </MovieRowContainer>
   );
 }
 
