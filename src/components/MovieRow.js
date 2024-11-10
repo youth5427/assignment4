@@ -19,7 +19,6 @@ const MovieThumbnails = styled.div`
   overflow: hidden; /* 스크롤 영역 숨기기 */
   padding: 10px 0;
   height: 250px;
-  position: relative;
 `;
 
 const MovieThumbnailWrapper = styled.div`
@@ -41,7 +40,7 @@ const LikeButton = styled.button`
   top: 10px;
   right: 10px;
   background-color: ${(props) =>
-    props.isLiked ? "rgba(255, 255, 0, 1)" : "rgba(255, 255, 255, 0.8)"};
+    props.isLiked ? "rgba(255, 255, 255, 1)" : "rgba(255, 255, 255, 0.8)"};
   border: none;
   border-radius: 50%;
   width: 30px;
@@ -64,7 +63,7 @@ const ScrollButton = styled.button`
   background-color: rgba(0, 0, 0, 0.5);
   color: white;
   border: none;
-  width: 40px;
+  width: 20px;
   height: 40px;
   cursor: pointer;
   z-index: 1;
@@ -82,13 +81,25 @@ const ScrollButton = styled.button`
   }
 `;
 
-function MovieRow({ title, fetchUrl, userPassword, params = {} }) {
+function MovieRow({
+  title,
+  fetchUrl,
+  userPassword,
+  params = {},
+  movies: propMovies,
+}) {
   const [movies, setMovies] = useState([]);
   const [likedMovies, setLikedMovies] = useState([]);
   const rowRef = useRef(null);
 
   useEffect(() => {
     const fetchMovies = async () => {
+      if (!fetchUrl) {
+        // fetchUrl이 없으면 props로 전달된 movies 사용
+        setMovies(propMovies || []);
+        return;
+      }
+
       try {
         const response = await axios.get(fetchUrl, {
           params: {
@@ -111,7 +122,7 @@ function MovieRow({ title, fetchUrl, userPassword, params = {} }) {
 
     fetchMovies();
     fetchLikedMovies();
-  }, [fetchUrl, userPassword, params]);
+  }, [fetchUrl, userPassword, params, propMovies]);
 
   const handleLike = (movie) => {
     const isAlreadyLiked = likedMovies.some((m) => m.id === movie.id);
