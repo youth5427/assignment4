@@ -1,0 +1,17 @@
+.app-header {
+  background-color: transparent;
+  position: fixed;
+  width: 100%;
+  top: 0;
+  left: 0;
+  z-index: 10;
+  transition: background-color 0.3s ease;
+}
+
+.app-header.scrolled {
+  background-color: #000;
+}
+
+.home {
+  padding-top: 50px;
+}
