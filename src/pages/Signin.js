@@ -22,7 +22,7 @@ const Background = styled.div`
   height: 100vh;
   margin: 0;
   font-family: Arial, sans-serif;
-  background-image: url("/public/Signin_background.jpg");
+  background-image: url("/Signin_background.jpg");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
