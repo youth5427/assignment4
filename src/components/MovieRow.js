@@ -40,7 +40,7 @@ const LikeButton = styled.button`
   top: 10px;
   right: 10px;
   background-color: ${(props) =>
-    props.isLiked ? "rgba(255, 255, 255, 1)" : "rgba(255, 255, 255, 0.8)"};
+    props.isLiked ? "rgba(255, 255, 0, 1)" : "rgba(255, 255, 255, 0.8)"};
   border: none;
   border-radius: 50%;
   width: 30px;
