@@ -97,6 +97,8 @@ function Popular() {
     if (viewMode === "infinity") {
       fetchMoviesForInfinity();
     } else {
+      setMovies([]); // 기존 데이터를 초기화
+      setCurrentPage(1);
       fetchMoviesForTable(1);
     }
   }, [viewMode]);
