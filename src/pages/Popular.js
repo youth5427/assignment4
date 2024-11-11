@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import axios from "axios";
 import TableView from "../components/TableView"; // 분리된 TableView 컴포넌트 import
+import Header from "../components/Header";
 
 const PageContainer = styled.div`
   padding: 20px;
@@ -30,7 +31,7 @@ function Popular() {
           }
         );
         setMovies(response.data.results.slice(0, 20)); // 20개만 가져오기
-        setTotalPages(Math.min(response.data.total_pages, 10)); // 최대 10페이지 제한
+        setTotalPages(Math.min(response.data.total_pages, 100)); // 최대 10페이지 제한
       } catch (error) {
         console.error("Error fetching popular movies:", error);
       }
@@ -47,6 +48,7 @@ function Popular() {
 
   return (
     <PageContainer>
+      <Header />
       <h1>인기 영화</h1>
       <TableView
         movies={movies}

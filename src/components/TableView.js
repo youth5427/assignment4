@@ -1,5 +1,6 @@
 import React from "react";
 import styled from "styled-components";
+import LikeButton from "./LikeButton"; // LikeButton import
 
 const MoviesGrid = styled.div`
   display: grid;
@@ -7,6 +8,10 @@ const MoviesGrid = styled.div`
   gap: 20px;
   width: 100%;
   max-width: 1200px;
+`;
+
+const MovieThumbnailWrapper = styled.div`
+  position: relative;
 `;
 
 const MovieThumbnail = styled.img`
@@ -17,6 +22,12 @@ const MovieThumbnail = styled.img`
   &:hover {
     transform: scale(1.05);
   }
+`;
+
+const LikeButtonWrapper = styled.div`
+  position: absolute;
+  top: 10px;
+  right: 10px;
 `;
 
 const PaginationContainer = styled.div`
@@ -60,26 +71,44 @@ function TableView({ movies, currentPage, totalPages, onPageChange }) {
     <>
       <MoviesGrid>
         {movies.map((movie) => (
-          <MovieThumbnail
-            key={movie.id}
-            src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
-            alt={movie.title}
-          />
+          <MovieThumbnailWrapper key={movie.id}>
+            <MovieThumbnail
+              src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
+              alt={movie.title}
+            />
+            <LikeButtonWrapper>
+              <LikeButton movie={movie} />
+            </LikeButtonWrapper>
+          </MovieThumbnailWrapper>
         ))}
       </MoviesGrid>
       <PaginationContainer>
         <PageButton
+          disabled={currentPage <= 10}
+          onClick={() => onPageChange(currentPage - 10)}
+        >
+          &lt;&lt;
+        </PageButton>
+        <PageButton
           disabled={currentPage === 1}
           onClick={() => onPageChange(currentPage - 1)}
         >
-          이전
+          &lt;
         </PageButton>
+
         {generatePagination()}
+
         <PageButton
           disabled={currentPage === totalPages}
           onClick={() => onPageChange(currentPage + 1)}
         >
-          다음
+          &gt;
+        </PageButton>
+        <PageButton
+          disabled={currentPage + 10 > totalPages}
+          onClick={() => onPageChange(currentPage + 10)}
+        >
+          &gt;&gt;
         </PageButton>
       </PaginationContainer>
     </>
