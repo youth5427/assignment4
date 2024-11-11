@@ -1,17 +1,12 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import axios from "axios";
-import Header from "../components/Header";
 
 const PageContainer = styled.div`
   padding: 20px;
   display: flex;
   flex-direction: column;
   align-items: center;
-`;
-
-const FilterContainer = styled.div`
-  margin-bottom: 20px;
 `;
 
 const MoviesGrid = styled.div`
@@ -53,45 +48,20 @@ function PopularMoviesPage() {
   const [movies, setMovies] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [genres, setGenres] = useState([]);
-  const [selectedGenre, setSelectedGenre] = useState("");
   const userPassword = localStorage.getItem("userPassword");
   const maxPagesToShow = 10; // 최대 페이지 수 제한
 
-  // 장르 목록 가져오기
-  useEffect(() => {
-    const fetchGenres = async () => {
-      try {
-        const response = await axios.get(
-          "https://api.themoviedb.org/3/genre/movie/list",
-          {
-            params: {
-              api_key: userPassword,
-              language: "ko-KR",
-            },
-          }
-        );
-        setGenres(response.data.genres);
-      } catch (error) {
-        console.error("Error fetching genres:", error);
-      }
-    };
-
-    fetchGenres();
-  }, [userPassword]);
-
-  // 선택된 장르와 페이지에 따라 영화 리스트 가져오기
+  // 현재 페이지에 따라 영화 리스트 가져오기
   useEffect(() => {
     const fetchMovies = async () => {
       try {
         const response = await axios.get(
-          "https://api.themoviedb.org/3/discover/movie",
+          "https://api.themoviedb.org/3/movie/popular",
           {
             params: {
               api_key: userPassword,
               language: "ko-KR",
               page: currentPage,
-              with_genres: selectedGenre || undefined, // 장르 선택 없으면 기본값
             },
           }
         );
@@ -103,7 +73,7 @@ function PopularMoviesPage() {
     };
 
     fetchMovies();
-  }, [currentPage, selectedGenre, userPassword]);
+  }, [currentPage, userPassword]);
 
   const handlePageChange = (page) => {
     if (page > 0 && page <= totalPages) {
@@ -131,26 +101,7 @@ function PopularMoviesPage() {
 
   return (
     <PageContainer>
-      <Header />
       <h1>인기 영화</h1>
-      <FilterContainer>
-        <label htmlFor="genre-select">장르 선택: </label>
-        <select
-          id="genre-select"
-          value={selectedGenre}
-          onChange={(e) => {
-            setSelectedGenre(e.target.value);
-            setCurrentPage(1); // 새로운 장르 선택 시 첫 페이지로 이동
-          }}
-        >
-          <option value="">전체</option>
-          {genres.map((genre) => (
-            <option key={genre.id} value={genre.id}>
-              {genre.name}
-            </option>
-          ))}
-        </select>
-      </FilterContainer>
       <MoviesGrid>
         {movies.map((movie) => (
           <MovieThumbnail
