@@ -8,7 +8,7 @@ import {
 import SignIn from "./pages/Signin";
 import Home from "./pages/Home";
 import Wishlist from "./pages/Wishlist";
-import PopularMoviesPage from "./pages/Popular";
+import Popular from "./pages/Popular";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
@@ -68,7 +68,7 @@ function App() {
           path="/Popular"
           element={
             <ProtectedRoute isAuthenticated={isAuthenticated}>
-              <PopularMoviesPage onLogout={handleLogout} />
+              <Popular onLogout={handleLogout} />
             </ProtectedRoute>
           }
         />
