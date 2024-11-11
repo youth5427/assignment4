@@ -84,12 +84,6 @@ function TableView({ movies, currentPage, totalPages, onPageChange }) {
       </MoviesGrid>
       <PaginationContainer>
         <PageButton
-          disabled={currentPage <= 10}
-          onClick={() => onPageChange(currentPage - 10)}
-        >
-          &lt;&lt;
-        </PageButton>
-        <PageButton
           disabled={currentPage === 1}
           onClick={() => onPageChange(currentPage - 1)}
         >
@@ -103,12 +97,6 @@ function TableView({ movies, currentPage, totalPages, onPageChange }) {
           onClick={() => onPageChange(currentPage + 1)}
         >
           &gt;
-        </PageButton>
-        <PageButton
-          disabled={currentPage + 10 > totalPages}
-          onClick={() => onPageChange(currentPage + 10)}
-        >
-          &gt;&gt;
         </PageButton>
       </PaginationContainer>
     </>
