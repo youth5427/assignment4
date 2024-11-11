@@ -71,7 +71,7 @@ function Header() {
         <nav style={styles.leftNav}>
           <ul style={styles.navLinks}>
             <li>
-              <a href="/home" style={styles.navLink}>
+              <a href="/Home" style={styles.navLink}>
                 홈
               </a>
             </li>

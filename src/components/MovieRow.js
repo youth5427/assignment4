@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import styled from "styled-components";
 import axios from "axios";
-import LikeButton from "./LikeButton"; // LikeButton 가져오기
+import LikeButton from "./LikeButton";
 
 const MovieRowContainer = styled.div`
   padding: 20px;
@@ -88,6 +88,30 @@ function MovieRow({
 
     fetchMovies();
   }, [fetchUrl, userPassword, params, propMovies]);
+
+  // 마우스 휠 이벤트 핸들러
+  const handleWheel = (event) => {
+    if (rowRef.current) {
+      event.preventDefault();
+      rowRef.current.scrollBy({
+        left: event.deltaY, // 마우스 휠의 Y축 움직임을 가로 스크롤로 전환
+        behavior: "smooth",
+      });
+    }
+  };
+
+  useEffect(() => {
+    const currentRow = rowRef.current;
+    if (currentRow) {
+      currentRow.addEventListener("wheel", handleWheel);
+    }
+
+    return () => {
+      if (currentRow) {
+        currentRow.removeEventListener("wheel", handleWheel);
+      }
+    };
+  }, []);
 
   const handleScroll = (direction) => {
     if (rowRef.current) {
