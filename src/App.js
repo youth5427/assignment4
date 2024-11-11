@@ -8,6 +8,7 @@ import {
 import SignIn from "./pages/Signin";
 import Home from "./pages/Home";
 import Wishlist from "./pages/Wishlist";
+import PopularMoviesPage from "./pages/Popular";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
@@ -59,6 +60,15 @@ function App() {
           element={
             <ProtectedRoute isAuthenticated={isAuthenticated}>
               <Wishlist onLogout={handleLogout} />
+            </ProtectedRoute>
+          }
+        />
+        {/* 보호된 Wishlist 페이지 */}
+        <Route
+          path="/Popular"
+          element={
+            <ProtectedRoute isAuthenticated={isAuthenticated}>
+              <PopularMoviesPage onLogout={handleLogout} />
             </ProtectedRoute>
           }
         />
