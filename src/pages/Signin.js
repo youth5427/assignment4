@@ -83,33 +83,18 @@ const Button = styled.button`
     background-color: #45a049;
   }
 `;
-
 function Signin() {
-  const [isSignup, setIsSignup] = useState(false);
+  const [isSignup, setIsSignup] = useState(false); // 회원가입/로그인 모드 전환
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [message, setMessage] = useState("");
+  const [currentUser, setCurrentUser] = useState(
+    localStorage.getItem("currentUser") || null
+  ); // 현재 로그인한 사용자
   const navigate = useNavigate();
 
-  const handleLogin = (e) => {
-    e.preventDefault();
-
-    const storedUser = JSON.parse(localStorage.getItem("user"));
-    if (storedUser) {
-      if (storedUser.email === email && storedUser.password === password) {
-        localStorage.setItem("isAuthenticated", "true");
-        localStorage.setItem("userPassword", password);
-        setMessage("로그인 성공!");
-        navigate("/Home", { replace: true });
-      } else {
-        setMessage("사용자 이름 또는 비밀번호가 잘못되었습니다.");
-      }
-    } else {
-      setMessage("회원가입이 필요합니다.");
-    }
-  };
-
+  // 회원가입 처리
   const handleSignup = (e) => {
     e.preventDefault();
 
@@ -119,14 +104,50 @@ function Signin() {
     }
 
     if (email && password) {
+      // 기존 사용자 목록 가져오기
+      const users = JSON.parse(localStorage.getItem("users")) || [];
+
+      // 이메일 중복 확인
+      const userExists = users.some((user) => user.email === email);
+      if (userExists) {
+        setMessage("이미 존재하는 이메일입니다.");
+        return;
+      }
+
+      // 새로운 사용자 추가
       const newUser = { email, password };
-      localStorage.setItem("user", JSON.stringify(newUser));
-      localStorage.setItem("userPassword", password);
+      users.push(newUser);
+      localStorage.setItem("users", JSON.stringify(users));
+
       setMessage("회원가입이 완료되었습니다! 이제 로그인하세요.");
       setIsSignup(false);
       clearFields();
     } else {
       setMessage("모든 필드를 입력해 주세요.");
+    }
+  };
+
+  // 로그인 처리
+  const handleLogin = (e) => {
+    e.preventDefault();
+
+    // 기존 사용자 목록 가져오기
+    const users = JSON.parse(localStorage.getItem("users")) || [];
+
+    // 입력한 이메일과 비밀번호 확인
+    const user = users.find(
+      (user) => user.email === email && user.password === password
+    );
+
+    if (user) {
+      localStorage.setItem("isAuthenticated", "true"); // 로그인 상태 저장
+      localStorage.setItem("currentUser", user.email); // 현재 로그인한 사용자 저장
+      localStorage.setItem("userPassword", user.password);
+      setCurrentUser(user.email); // 상태 업데이트
+      setMessage("로그인 성공!");
+      navigate("/Home", { replace: true });
+    } else {
+      setMessage("사용자 이름 또는 비밀번호가 잘못되었습니다.");
     }
   };
 
@@ -136,10 +157,24 @@ function Signin() {
     setConfirmPassword("");
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem("isAuthenticated");
+    localStorage.removeItem("currentUser");
+    setCurrentUser(null);
+    navigate("/Signin", { replace: true });
+  };
+
   return (
     <Background>
       <Container>
         <Title>{isSignup ? "회원가입" : "로그인"}</Title>
+
+        {currentUser && (
+          <p>
+            현재 로그인한 사용자: <strong>{currentUser}</strong>
+          </p>
+        )}
+
         <Form onSubmit={isSignup ? handleSignup : handleLogin}>
           <Label htmlFor="email">Email</Label>
           <Input
@@ -179,6 +214,12 @@ function Signin() {
         </Form>
 
         {message && <p>{message}</p>}
+
+        {currentUser && (
+          <Button onClick={handleLogout} style={{ marginTop: "10px" }}>
+            로그아웃
+          </Button>
+        )}
 
         <LinkText
           onClick={() => {
