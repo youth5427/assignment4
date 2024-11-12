@@ -45,13 +45,22 @@ const PageButton = styled.button`
   color: ${(props) => (props.active ? "white" : "black")};
   cursor: ${(props) => (props.disabled ? "not-allowed" : "pointer")};
   pointer-events: ${(props) => (props.disabled ? "none" : "auto")};
+
+  &:hover {
+    background-color: ${(props) => (props.active ? "#0056b3" : "#e0e0e0")};
+  }
+`;
+const CurrentPageDisplay = styled.div`
+  margin-left: 10px;
+  font-size: 1rem;
+  color: #555;
 `;
 
 function TableView({ movies, currentPage, totalPages, onPageChange }) {
   const generatePagination = () => {
-    const maxPagesToShow = 10;
-    const startPage = Math.max(1, currentPage - 5);
-    const endPage = Math.min(totalPages, startPage + maxPagesToShow - 1);
+    const maxPagesToShow = 2; // 현재 페이지를 기준으로 앞뒤 2개씩 표시
+    const startPage = Math.max(1, currentPage - maxPagesToShow);
+    const endPage = Math.min(totalPages, currentPage + maxPagesToShow);
 
     return Array.from({ length: endPage - startPage + 1 }, (_, index) => {
       const page = startPage + index;
@@ -85,7 +94,13 @@ function TableView({ movies, currentPage, totalPages, onPageChange }) {
       <PaginationContainer>
         <PageButton
           disabled={currentPage === 1}
-          onClick={() => onPageChange(currentPage - 1)}
+          onClick={() => onPageChange(Math.max(1, currentPage - 10))}
+        >
+          &lt;&lt;
+        </PageButton>
+        <PageButton
+          disabled={currentPage === 1}
+          onClick={() => onPageChange(Math.max(1, currentPage - 1))}
         >
           &lt;
         </PageButton>
@@ -94,10 +109,21 @@ function TableView({ movies, currentPage, totalPages, onPageChange }) {
 
         <PageButton
           disabled={currentPage === totalPages}
-          onClick={() => onPageChange(currentPage + 1)}
+          onClick={() => onPageChange(Math.min(totalPages, currentPage + 1))}
         >
           &gt;
         </PageButton>
+        <PageButton
+          disabled={currentPage === totalPages}
+          onClick={() => onPageChange(Math.min(totalPages, currentPage + 10))}
+        >
+          &gt;&gt;
+        </PageButton>
+
+        {/* 현재 페이지 표시 텍스트 */}
+        {/* <CurrentPageDisplay>
+          Page {currentPage} of {totalPages}
+        </CurrentPageDisplay> */}
       </PaginationContainer>
     </>
   );

@@ -68,9 +68,11 @@ function Popular() {
   };
 
   const fetchMoviesForInfinity = async () => {
+    // 현재 로딩 중이거나 모든 페이지를 다 불러왔다면 리턴
     if (loading || currentPage > totalPages) return;
 
-    setLoading(true);
+    setLoading(true); // 로딩 상태를 설정
+
     try {
       const response = await axios.get(
         "https://api.themoviedb.org/3/movie/popular",
@@ -78,23 +80,33 @@ function Popular() {
           params: {
             api_key: userPassword,
             language: "ko-KR",
-            page: currentPage,
+            page: currentPage, // 현재 페이지 요청
           },
         }
       );
 
-      setMovies((prevMovies) => [...prevMovies, ...response.data.results]);
+      // 중복 데이터 방지를 위해 기존 데이터와 합침
+      setMovies((prevMovies) => [
+        ...prevMovies.filter(
+          (movie) =>
+            !response.data.results.find((newMovie) => newMovie.id === movie.id)
+        ),
+        ...response.data.results,
+      ]);
+
       setTotalPages(response.data.total_pages);
-      setCurrentPage((prevPage) => prevPage + 1);
+      setCurrentPage((prevPage) => prevPage + 1); // 다음 페이지로 증가
     } catch (error) {
       console.error("Error fetching popular movies:", error);
     } finally {
-      setLoading(false);
+      setLoading(false); // 로딩 상태 해제
     }
   };
 
   useEffect(() => {
     if (viewMode === "infinity") {
+      setMovies([]); // 기존 데이터를 초기화
+      setCurrentPage(1);
       fetchMoviesForInfinity();
     } else {
       setMovies([]); // 기존 데이터를 초기화
@@ -124,9 +136,12 @@ function Popular() {
       {viewMode === "table" ? (
         <TableView
           movies={movies}
-          currentPage={currentPage - 1}
+          currentPage={currentPage}
           totalPages={totalPages}
-          onPageChange={(page) => fetchMoviesForTable(page)}
+          onPageChange={(page) => {
+            setCurrentPage(page); // 현재 페이지 상태 업데이트
+            fetchMoviesForTable(page); // 해당 페이지 데이터 로드
+          }}
         />
       ) : (
         <InfinityScrollView
