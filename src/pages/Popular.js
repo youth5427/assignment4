@@ -104,13 +104,11 @@ function Popular() {
   };
 
   useEffect(() => {
+    setMovies([]); // 기존 데이터를 초기화
+    setCurrentPage(1);
     if (viewMode === "infinity") {
-      setMovies([]); // 기존 데이터를 초기화
-      setCurrentPage(1);
       fetchMoviesForInfinity();
     } else {
-      setMovies([]); // 기존 데이터를 초기화
-      setCurrentPage(1);
       fetchMoviesForTable(1);
     }
   }, [viewMode]);
@@ -127,7 +125,10 @@ function Popular() {
         </ToggleButton>
         <ToggleButton
           active={viewMode === "infinity"}
-          onClick={() => setViewMode("infinity")}
+          onClick={() => {
+            setCurrentPage(1);
+            setViewMode("infinity");
+          }}
         >
           Infinity Scroll
         </ToggleButton>
@@ -145,6 +146,9 @@ function Popular() {
         />
       ) : (
         <InfinityScrollView
+          onPageChange={() => {
+            setCurrentPage(1); // 현재 페이지 상태 업데이트
+          }}
           fetchMovies={fetchMoviesForInfinity}
           movies={movies}
           loading={loading}
