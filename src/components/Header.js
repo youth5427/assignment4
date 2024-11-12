@@ -18,6 +18,7 @@ function Header() {
   const handleLogout = () => {
     localStorage.removeItem("isAuthenticated"); // 인증 상태 제거
     localStorage.removeItem("currentUser");
+    setCurrentUser(null);
     navigate("/Signin"); // 로그인 페이지로 이동
   };
 

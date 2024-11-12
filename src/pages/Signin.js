@@ -118,9 +118,9 @@ function Signin() {
       const newUser = { email, password };
       users.push(newUser);
       localStorage.setItem("users", JSON.stringify(users));
-
+      localStorage.setItem("userPassword", "");
       setMessage("회원가입이 완료되었습니다! 이제 로그인하세요.");
-      setIsSignup(false);
+      setIsSignup(false); //로그인 모드로 전환
       clearFields();
     } else {
       setMessage("모든 필드를 입력해 주세요.");
@@ -142,7 +142,7 @@ function Signin() {
     if (user) {
       localStorage.setItem("isAuthenticated", "true"); // 로그인 상태 저장
       localStorage.setItem("currentUser", user.email); // 현재 로그인한 사용자 저장
-      localStorage.setItem("userPassword", user.password);
+      localStorage.setItem("userPassword", user.password); //API키를 위해 비밀번호를 저장
       setCurrentUser(user.email); // 상태 업데이트
       setMessage("로그인 성공!");
       navigate("/Home", { replace: true });
