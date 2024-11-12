@@ -16,9 +16,19 @@ const Title = styled.h2`
 const MovieThumbnails = styled.div`
   display: flex;
   gap: 15px;
-  overflow: hidden;
+  overflow-x: auto; /* 좌우 스크롤 활성화 */
+  overflow-y: hidden; /* 상하 스크롤 비활성화 */
   padding: 10px 0;
   height: 250px;
+  -webkit-overflow-scrolling: touch; /* 모바일 터치 스크롤 부드럽게 */
+
+  /* 스크롤바 숨기기 */
+  scrollbar-width: none; /* Firefox용 */
+  -ms-overflow-style: none; /* IE, Edge용 */
+
+  &::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Edge, Opera용 */
+  }
 `;
 
 const MovieThumbnailWrapper = styled.div`
