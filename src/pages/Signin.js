@@ -169,12 +169,6 @@ function Signin() {
       <Container>
         <Title>{isSignup ? "회원가입" : "로그인"}</Title>
 
-        {currentUser && (
-          <p>
-            현재 로그인한 사용자: <strong>{currentUser}</strong>
-          </p>
-        )}
-
         <Form onSubmit={isSignup ? handleSignup : handleLogin}>
           <Label htmlFor="email">Email</Label>
           <Input
