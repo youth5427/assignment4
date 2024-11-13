@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Footer from "../components/Footer";
 import styled from "styled-components";
+import axios from "axios"; // axios 추가
 
 // 스타일 정의
 const Container = styled.div`
@@ -124,7 +125,20 @@ const Loading = () => (
     </div>
   </LoadingContainer>
 );
-
+const validatePasswordWithAPI = async (password) => {
+  try {
+    const response = await axios.get(
+      "https://api.themoviedb.org/3/movie/popular",
+      {
+        params: { api_key: password }, // 비밀번호를 API 키로 검증
+      }
+    );
+    return response.status === 200; // 요청 성공 시 true 반환
+  } catch (error) {
+    console.error("Invalid API key:", error);
+    return false; // 실패 시 false 반환
+  }
+};
 function Signin({ onLogin }) {
   const [isSignup, setIsSignup] = useState(false);
   const [email, setEmail] = useState("");
@@ -138,13 +152,21 @@ function Signin({ onLogin }) {
     e.preventDefault();
     setIsLoading(true);
 
-    setTimeout(() => {
+    setTimeout(async () => {
       if (password !== confirmPassword) {
         setMessage("비밀번호가 일치하지 않습니다.");
         setIsLoading(false);
         return;
       }
+      // 비밀번호(API 키) 유효성 검사
+      const isValidPassword = await validatePasswordWithAPI(password);
 
+      if (!isValidPassword) {
+        setMessage("올바른 API으로 가입해주세요.");
+        setIsLoading(false);
+        return;
+      }
+      // 계정 중복 확인
       if (email && password) {
         const users = JSON.parse(localStorage.getItem("users")) || [];
         const userExists = users.some((user) => user.email === email);
