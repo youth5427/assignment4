@@ -12,10 +12,12 @@ import Popular from "./pages/Popular";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
-  // 초기 상태를 로컬 스토리지와 동기화
-  const [isAuthenticated, setIsAuthenticated] = useState(
-    localStorage.getItem("isAuthenticated") === "true"
-  );
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  // localStorage 값과 상태 동기화
+  useEffect(() => {
+    setIsAuthenticated(localStorage.getItem("isAuthenticated") === "true");
+  }, []);
 
   const handleLogin = () => {
     localStorage.setItem("isAuthenticated", "true");
@@ -30,7 +32,7 @@ function App() {
   return (
     <Router>
       <Routes>
-        {/* 기본 경로: 로그인 여부에 따라 라우트 결정 */}
+        {/* 기본 경로 */}
         <Route
           path="/"
           element={
@@ -54,6 +56,7 @@ function App() {
             </ProtectedRoute>
           }
         />
+
         {/* 보호된 Wishlist 페이지 */}
         <Route
           path="/Wishlist"
@@ -63,7 +66,8 @@ function App() {
             </ProtectedRoute>
           }
         />
-        {/* 보호된 Wishlist 페이지 */}
+
+        {/* 보호된 Popular 페이지 */}
         <Route
           path="/Popular"
           element={
