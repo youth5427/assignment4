@@ -51,8 +51,17 @@ function App() {
           }
         />
 
-        {/* 로그인 페이지 */}
-        <Route path="/Signin" element={<SignIn onLogin={handleLogin} />} />
+        {/* 로그인 상태에서 비정상적으로 /Signin으로 접근 방지 */}
+        <Route
+          path="/Signin"
+          element={
+            isAuthenticated ? (
+              <Navigate to="/Home" replace />
+            ) : (
+              <SignIn onLogin={handleLogin} />
+            )
+          }
+        />
 
         {/* 보호된 Home 페이지 */}
         <Route

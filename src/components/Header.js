@@ -23,6 +23,7 @@ function Header() {
     localStorage.removeItem("userPassword");
     setCurrentUser(null);
     navigate("/Signin"); // 로그인 페이지로 이동
+    window.location.reload(); // 페이지 새로고침으로 /Signin으로 정상적으로 이동
   };
 
   const styles = {
