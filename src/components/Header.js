@@ -12,12 +12,15 @@ function Header() {
       // @ 앞부분만 추출
       const username = storedUser.split("@")[0];
       setCurrentUser(username);
+    } else {
+      setCurrentUser("경고! 잘못된 접근입니다."); // currentUser가 없을 경우 경고
     }
   }, []);
 
   const handleLogout = () => {
     localStorage.removeItem("isAuthenticated"); // 인증 상태 제거
     localStorage.removeItem("currentUser");
+    localStorage.removeItem("userPassword");
     setCurrentUser(null);
     navigate("/Signin"); // 로그인 페이지로 이동
   };
