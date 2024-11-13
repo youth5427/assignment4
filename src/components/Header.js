@@ -1,12 +1,24 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 function Header() {
   const navigate = useNavigate();
+  const [currentUser, setCurrentUser] = useState(null);
+
+  useEffect(() => {
+    // 현재 로그인한 사용자 가져오기
+    const storedUser = localStorage.getItem("currentUser");
+    if (storedUser) {
+      // @ 앞부분만 추출
+      const username = storedUser.split("@")[0];
+      setCurrentUser(username);
+    }
+  }, []);
 
   const handleLogout = () => {
     localStorage.removeItem("isAuthenticated"); // 인증 상태 제거
-    // localStorage.removeItem("user"); // 사용자 데이터 제거 (필요 시)
+    localStorage.removeItem("currentUser");
+    setCurrentUser(null);
     navigate("/Signin"); // 로그인 페이지로 이동
   };
 
@@ -43,15 +55,13 @@ function Header() {
       textDecoration: "none",
       fontSize: "1.1rem",
     },
-    navLinkHover: {
-      color: "#1db954",
-    },
     logoutButton: {
       background: "none",
       border: "none",
       color: "white",
       fontSize: "1.1rem",
       cursor: "pointer",
+      marginLeft: "20px",
     },
     leftNav: {
       display: "flex",
@@ -61,6 +71,11 @@ function Header() {
     rightNav: {
       display: "flex",
       alignItems: "center",
+    },
+    userName: {
+      fontSize: "1.1rem",
+      color: "#ddd",
+      fontWeight: "bold",
     },
   };
 
@@ -88,8 +103,10 @@ function Header() {
           </ul>
         </nav>
 
-        {/* 오른쪽 로그아웃 */}
+        {/* 오른쪽 로그아웃 및 사용자 이름 */}
         <div style={styles.rightNav}>
+          {currentUser && <span style={styles.userName}>{currentUser}</span>}
+          <p> 님</p>
           <button onClick={handleLogout} style={styles.logoutButton}>
             Logout
           </button>
