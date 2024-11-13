@@ -83,6 +83,50 @@ const Button = styled.button`
     background-color: #45a049;
   }
 `;
+
+const LoadingContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: rgba(255, 255, 255, 0.85);
+`;
+
+const Spinner = styled.div`
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  border-top: 4px solid #4caf50;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  animation: spin 1s linear infinite;
+
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+`;
+
+const LoadingMessage = styled.p`
+  margin-top: 1rem;
+  font-size: 1.2rem;
+  color: #333;
+`;
+
+const Loading = () => {
+  return (
+    <LoadingContainer>
+      <div>
+        <Spinner />
+        <LoadingMessage>처리 중입니다...</LoadingMessage>
+      </div>
+    </LoadingContainer>
+  );
+};
+
 function Signin() {
   const [isSignup, setIsSignup] = useState(false); // 회원가입/로그인 모드 전환
   const [email, setEmail] = useState("");
@@ -92,63 +136,65 @@ function Signin() {
   const [currentUser, setCurrentUser] = useState(
     localStorage.getItem("currentUser") || null
   ); // 현재 로그인한 사용자
+  const [isLoading, setIsLoading] = useState(false); // 로딩 상태 추가
   const navigate = useNavigate();
 
-  // 회원가입 처리
   const handleSignup = (e) => {
     e.preventDefault();
+    setIsLoading(true); // 로딩 상태 활성화
 
-    if (password !== confirmPassword) {
-      setMessage("비밀번호가 일치하지 않습니다.");
-      return;
-    }
-
-    if (email && password) {
-      // 기존 사용자 목록 가져오기
-      const users = JSON.parse(localStorage.getItem("users")) || [];
-
-      // 이메일 중복 확인
-      const userExists = users.some((user) => user.email === email);
-      if (userExists) {
-        setMessage("이미 존재하는 이메일입니다.");
+    setTimeout(() => {
+      if (password !== confirmPassword) {
+        setMessage("비밀번호가 일치하지 않습니다.");
+        setIsLoading(false);
         return;
       }
 
-      // 새로운 사용자 추가
-      const newUser = { email, password };
-      users.push(newUser);
-      localStorage.setItem("users", JSON.stringify(users));
-      localStorage.setItem("userPassword", "");
-      setMessage("회원가입이 완료되었습니다! 이제 로그인하세요.");
-      setIsSignup(false); //로그인 모드로 전환
-      clearFields();
-    } else {
-      setMessage("모든 필드를 입력해 주세요.");
-    }
+      if (email && password) {
+        const users = JSON.parse(localStorage.getItem("users")) || [];
+        const userExists = users.some((user) => user.email === email);
+        if (userExists) {
+          setMessage("이미 존재하는 이메일입니다.");
+          setIsLoading(false);
+          return;
+        }
+
+        const newUser = { email, password };
+        users.push(newUser);
+        localStorage.setItem("users", JSON.stringify(users));
+        setMessage("회원가입이 완료되었습니다!");
+        setIsSignup(false); // 로그인 모드로 전환
+        clearFields();
+        setIsLoading(false);
+      } else {
+        setMessage("모든 필드를 입력해 주세요.");
+        setIsLoading(false);
+      }
+    }, 1000); // 1초 지연
   };
 
-  // 로그인 처리
   const handleLogin = (e) => {
     e.preventDefault();
+    setIsLoading(true); // 로딩 상태 활성화
 
-    // 기존 사용자 목록 가져오기
-    const users = JSON.parse(localStorage.getItem("users")) || [];
+    setTimeout(() => {
+      const users = JSON.parse(localStorage.getItem("users")) || [];
+      const user = users.find(
+        (user) => user.email === email && user.password === password
+      );
 
-    // 입력한 이메일과 비밀번호 확인
-    const user = users.find(
-      (user) => user.email === email && user.password === password
-    );
-
-    if (user) {
-      localStorage.setItem("isAuthenticated", "true"); // 로그인 상태 저장
-      localStorage.setItem("currentUser", user.email); // 현재 로그인한 사용자 저장
-      localStorage.setItem("userPassword", user.password); //API키를 위해 비밀번호를 저장
-      setCurrentUser(user.email); // 상태 업데이트
-      setMessage("로그인 성공!");
-      navigate("/Home", { replace: true });
-    } else {
-      setMessage("사용자 이름 또는 비밀번호가 잘못되었습니다.");
-    }
+      if (user) {
+        localStorage.setItem("isAuthenticated", "true");
+        localStorage.setItem("currentUser", user.email);
+        setCurrentUser(user.email);
+        setMessage("로그인 성공!");
+        setIsLoading(false); // 로딩 상태 비활성화
+        navigate("/Home", { replace: true });
+      } else {
+        setMessage("사용자 이름 또는 비밀번호가 잘못되었습니다.");
+        setIsLoading(false); // 로딩 상태 비활성화
+      }
+    }, 1000); // 1초 지연
   };
 
   const clearFields = () => {
@@ -165,69 +211,77 @@ function Signin() {
   };
 
   return (
-    <Background>
-      <Container>
-        <Title>{isSignup ? "회원가입" : "로그인"}</Title>
+    <>
+      {isLoading ? (
+        <Loading />
+      ) : (
+        <Background>
+          <Container>
+            <Title>{isSignup ? "회원가입" : "로그인"}</Title>
 
-        <Form onSubmit={isSignup ? handleSignup : handleLogin}>
-          <Label htmlFor="email">Email</Label>
-          <Input
-            type="text"
-            id="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            placeholder="Enter your email"
-          />
+            <Form onSubmit={isSignup ? handleSignup : handleLogin}>
+              <Label htmlFor="email">Email</Label>
+              <Input
+                type="text"
+                id="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                placeholder="Enter your email"
+              />
 
-          <Label htmlFor="password">Password</Label>
-          <Input
-            type="password"
-            id="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            placeholder="Enter your password"
-          />
-
-          {isSignup && (
-            <>
-              <Label htmlFor="confirmPassword">Confirm Password</Label>
+              <Label htmlFor="password">Password</Label>
               <Input
                 type="password"
-                id="confirmPassword"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
+                id="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 required
-                placeholder="Confirm your password"
+                placeholder="Enter your password"
               />
-            </>
-          )}
 
-          <Button type="submit">{isSignup ? "Sign Up" : "Sign In"}</Button>
-        </Form>
+              {isSignup && (
+                <>
+                  <Label htmlFor="confirmPassword">Confirm Password</Label>
+                  <Input
+                    type="password"
+                    id="confirmPassword"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    required
+                    placeholder="Confirm your password"
+                  />
+                </>
+              )}
 
-        {message && <p>{message}</p>}
+              <Button type="submit">{isSignup ? "Sign Up" : "Sign In"}</Button>
+            </Form>
 
-        {currentUser && (
-          <Button onClick={handleLogout} style={{ marginTop: "10px" }}>
-            로그아웃
-          </Button>
-        )}
+            {message && <p>{message}</p>}
 
-        <LinkText
-          onClick={() => {
-            setIsSignup(!isSignup);
-            setMessage("");
-            clearFields();
-          }}
-        >
-          {isSignup ? "이미 계정이 있나요? 로그인" : "계정이 없나요? 회원가입"}
-        </LinkText>
+            {currentUser && (
+              <Button onClick={handleLogout} style={{ marginTop: "10px" }}>
+                로그아웃
+              </Button>
+            )}
 
-        <Footer />
-      </Container>
-    </Background>
+            <LinkText
+              onClick={() => {
+                setIsSignup(!isSignup);
+                setMessage("");
+                clearFields();
+              }}
+            >
+              {isSignup
+                ? "이미 계정이 있나요? 로그인"
+                : "계정이 없나요? 회원가입"}
+            </LinkText>
+
+            <Footer />
+          </Container>
+        </Background>
+      )}
+    </>
   );
 }
 
