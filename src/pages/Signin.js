@@ -121,7 +121,7 @@ const Loading = () => (
   <LoadingContainer>
     <div>
       <Spinner />
-      <LoadingMessage>처리 중입니다...</LoadingMessage>
+      <LoadingMessage>처리 중입니다....</LoadingMessage>
     </div>
   </LoadingContainer>
 );
