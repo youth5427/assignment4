@@ -9,6 +9,7 @@ import SignIn from "./pages/Signin";
 import Home from "./pages/Home";
 import Wishlist from "./pages/Wishlist";
 import Popular from "./pages/Popular";
+import Search from "./pages/Search";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
@@ -89,6 +90,16 @@ function App() {
           element={
             <ProtectedRoute isAuthenticated={isAuthenticated}>
               <Popular currentUser={currentUser} onLogout={handleLogout} />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* 보호된 Search 페이지 */}
+        <Route
+          path="/Search"
+          element={
+            <ProtectedRoute isAuthenticated={isAuthenticated}>
+              <Search currentUser={currentUser} onLogout={handleLogout} />
             </ProtectedRoute>
           }
         />
