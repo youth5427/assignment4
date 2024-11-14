@@ -100,6 +100,11 @@ function Header() {
               </a>
             </li>
             <li>
+              <a href="/Search" style={styles.navLink}>
+                찾아보기
+              </a>
+            </li>
+            <li>
               <a href="/Wishlist" style={styles.navLink}>
                 찜한 리스트
               </a>
