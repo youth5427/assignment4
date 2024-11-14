@@ -180,6 +180,7 @@ function Search() {
       setSelectedGenre("");
       setSelectedRating("");
       setCurrentPage(1);
+      window.scrollTo({ top: 0, behavior: "smooth" }); // 상단으로 스크롤
     } else {
     }
   };
