@@ -29,6 +29,7 @@ const ToggleButton = styled.button`
   background-color: ${(props) => (props.active ? "#007bff" : "#f0f0f0")};
   color: ${(props) => (props.active ? "white" : "black")};
   cursor: pointer;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 그림자 추가 */
   font-size: 0.9rem;
 
   &:hover {

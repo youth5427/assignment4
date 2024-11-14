@@ -6,14 +6,41 @@ import TableView from "../components/TableView";
 import InfinityScrollView from "../components/InfinityScrollView";
 
 const PageContainer = styled.div`
-  margin-top: 100px; /* Header로부터 10px 떨어지도록 설정 */
+  margin-top: 100px;
   padding: 20px;
   display: flex;
   flex-direction: column;
   align-items: center;
 `;
+
 const FilterContainer = styled.div`
   margin-bottom: 20px;
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  border-radius: 5px;
+  background-color: #ffebcd;
+  padding: 5px 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 그림자 추가 */
+`;
+
+const ResetButton = styled.button`
+  height: 30px;
+
+  border: none;
+  border-radius: 5px;
+  background-color: #ff6b6b;
+  color: white;
+  cursor: pointer;
+  font-size: 0.9rem;
+
+  &:hover {
+    background-color: #ff3b3b;
+  }
+
+  &:focus {
+    outline: none;
+  }
 `;
 
 const ViewToggleContainer = styled.div`
@@ -22,10 +49,11 @@ const ViewToggleContainer = styled.div`
   right: 20px;
   display: flex;
   gap: 10px;
-  z-index: 1000; /* 다른 요소보다 위에 표시 */
+  z-index: 1000;
 `;
 
 const ToggleButton = styled.button`
+  height: 40px;
   padding: 10px 15px;
   border: none;
   border-radius: 5px;
@@ -33,7 +61,7 @@ const ToggleButton = styled.button`
   color: ${(props) => (props.active ? "white" : "black")};
   cursor: pointer;
   font-size: 0.9rem;
-
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 그림자 추가 */
   &:hover {
     background-color: ${(props) => (props.active ? "#0056b3" : "#e0e0e0")};
   }
@@ -43,15 +71,16 @@ const ToggleButton = styled.button`
   }
 `;
 
-function Popular() {
+function Search() {
   const [movies, setMovies] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(false);
-  const [viewMode, setViewMode] = useState("infinity"); // "table" or "infinity"
+  const [viewMode, setViewMode] = useState("infinity");
   const userPassword = localStorage.getItem("userPassword");
   const [genres, setGenres] = useState([]);
   const [selectedGenre, setSelectedGenre] = useState("");
+  const [selectedRating, setSelectedRating] = useState(""); // 선택된 평점 상태 추가
 
   // Fetch genres
   useEffect(() => {
@@ -70,20 +99,26 @@ function Popular() {
     };
     fetchGenres();
   }, [userPassword]);
+
   const fetchMoviesForTable = async (page) => {
     try {
+      const minRating = selectedRating ? parseFloat(selectedRating) : undefined;
+      const maxRating = minRating !== undefined ? minRating + 0.9 : undefined;
+
       const response = await axios.get(
-        "https://api.themoviedb.org/3/discover/movie", // discover API 사용
+        "https://api.themoviedb.org/3/discover/movie",
         {
           params: {
             api_key: userPassword,
             language: "ko-KR",
             page,
-            with_genres: selectedGenre || undefined, // 선택된 장르 적용
+            with_genres: selectedGenre || undefined,
+            "vote_average.gte": minRating,
+            "vote_average.lte": maxRating,
           },
         }
       );
-      setMovies(response.data.results); // 기존 데이터 덮어쓰기
+      setMovies(response.data.results);
       setTotalPages(response.data.total_pages);
     } catch (error) {
       console.error("Error fetching popular movies:", error);
@@ -93,22 +128,26 @@ function Popular() {
   const fetchMoviesForInfinity = async () => {
     if (loading || currentPage > totalPages) return;
 
-    setLoading(true); // 로딩 상태를 설정
+    setLoading(true);
 
     try {
+      const minRating = selectedRating ? parseFloat(selectedRating) : undefined;
+      const maxRating = minRating !== undefined ? minRating + 0.9 : undefined;
+
       const response = await axios.get(
-        "https://api.themoviedb.org/3/discover/movie", // discover API 사용
+        "https://api.themoviedb.org/3/discover/movie",
         {
           params: {
             api_key: userPassword,
             language: "ko-KR",
             page: currentPage,
-            with_genres: selectedGenre || undefined, // 선택된 장르 적용
+            with_genres: selectedGenre || undefined,
+            "vote_average.gte": minRating,
+            "vote_average.lte": maxRating,
           },
         }
       );
 
-      // 중복 데이터 방지를 위해 기존 데이터와 합침
       setMovies((prevMovies) => [
         ...prevMovies.filter(
           (movie) =>
@@ -118,45 +157,80 @@ function Popular() {
       ]);
 
       setTotalPages(response.data.total_pages);
-      setCurrentPage((prevPage) => prevPage + 1); // 다음 페이지로 증가
+      setCurrentPage((prevPage) => prevPage + 1);
     } catch (error) {
       console.error("Error fetching popular movies:", error);
     } finally {
-      setLoading(false); // 로딩 상태 해제
+      setLoading(false);
     }
   };
 
   useEffect(() => {
-    setMovies([]); // 기존 데이터를 초기화
+    setMovies([]);
     setCurrentPage(1);
     if (viewMode === "infinity") {
       fetchMoviesForInfinity();
     } else {
       fetchMoviesForTable(1);
     }
-  }, [viewMode, selectedGenre]); // selectedGenre 추가
+  }, [viewMode, selectedGenre, selectedRating]);
+
+  const handleResetFilters = () => {
+    if (window.confirm("필터가 초기화 됩니다.")) {
+      setSelectedGenre("");
+      setSelectedRating("");
+      setCurrentPage(1);
+    } else {
+    }
+  };
+
   return (
     <PageContainer>
       <Header />
-      <FilterContainer>
-        <label htmlFor="genre-select">장르 선택: </label>
-        <select
-          id="genre-select"
-          value={selectedGenre}
-          onChange={(e) => {
-            setSelectedGenre(e.target.value);
-            setCurrentPage(1); // 장르 변경 시 첫 페이지로 이동
-          }}
-        >
-          <option value="">전체</option>
-          {genres.map((genre) => (
-            <option key={genre.id} value={genre.id}>
-              {genre.name}
-            </option>
-          ))}
-        </select>
-      </FilterContainer>
+
       <ViewToggleContainer>
+        <FilterContainer>
+          <div>
+            <label htmlFor="genre-select">장르 선택: </label>
+            <select
+              id="genre-select"
+              value={selectedGenre}
+              onChange={(e) => {
+                setSelectedGenre(e.target.value);
+                setCurrentPage(1);
+              }}
+            >
+              <option value="">전체</option>
+              {genres.map((genre) => (
+                <option key={genre.id} value={genre.id}>
+                  {genre.name}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label htmlFor="rating-select">평점 선택: </label>
+            <select
+              id="rating-select"
+              value={selectedRating}
+              onChange={(e) => {
+                setSelectedRating(e.target.value);
+                setCurrentPage(1);
+              }}
+            >
+              <option value="">전체</option>
+              {[...Array(10)].map((_, i) => {
+                const rating = 10 - i;
+                return (
+                  <option key={rating} value={rating}>
+                    {rating}점대
+                  </option>
+                );
+              })}
+            </select>
+          </div>
+          <ResetButton onClick={handleResetFilters}>초기화</ResetButton>
+        </FilterContainer>
         <ToggleButton
           active={viewMode === "table"}
           onClick={() => setViewMode("table")}
@@ -180,14 +254,14 @@ function Popular() {
           currentPage={currentPage}
           totalPages={totalPages}
           onPageChange={(page) => {
-            setCurrentPage(page); // 현재 페이지 상태 업데이트
-            fetchMoviesForTable(page); // 해당 페이지 데이터 로드
+            setCurrentPage(page);
+            fetchMoviesForTable(page);
           }}
         />
       ) : (
         <InfinityScrollView
           onPageChange={() => {
-            setCurrentPage(1); // 현재 페이지 상태 업데이트
+            setCurrentPage(1);
           }}
           fetchMovies={fetchMoviesForInfinity}
           movies={movies}
@@ -198,4 +272,4 @@ function Popular() {
   );
 }
 
-export default Popular;
+export default Search;
