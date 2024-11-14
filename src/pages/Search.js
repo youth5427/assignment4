@@ -81,6 +81,7 @@ function Search() {
   const [genres, setGenres] = useState([]);
   const [selectedGenre, setSelectedGenre] = useState("");
   const [selectedRating, setSelectedRating] = useState(""); // 선택된 평점 상태 추가
+  const [sortOrder, setSortOrder] = useState(""); // 정렬 상태 추가
 
   // Fetch genres
   useEffect(() => {
@@ -115,6 +116,7 @@ function Search() {
             with_genres: selectedGenre || undefined,
             "vote_average.gte": minRating,
             "vote_average.lte": maxRating,
+            sort_by: sortOrder || "popularity.desc", // 정렬 기준 적용
           },
         }
       );
@@ -144,6 +146,7 @@ function Search() {
             with_genres: selectedGenre || undefined,
             "vote_average.gte": minRating,
             "vote_average.lte": maxRating,
+            sort_by: sortOrder || "popularity.desc", // 정렬 기준 적용
           },
         }
       );
@@ -173,12 +176,13 @@ function Search() {
     } else {
       fetchMoviesForTable(1);
     }
-  }, [viewMode, selectedGenre, selectedRating]);
+  }, [viewMode, selectedGenre, selectedRating, sortOrder]);
 
   const handleResetFilters = () => {
     if (window.confirm("필터가 초기화 됩니다.")) {
       setSelectedGenre("");
       setSelectedRating("");
+      setSortOrder("");
       setCurrentPage(1);
       window.scrollTo({ top: 0, behavior: "smooth" }); // 상단으로 스크롤
     } else {
@@ -230,6 +234,26 @@ function Search() {
               })}
             </select>
           </div>
+          <div>
+            <label htmlFor="sort-select">정렬 기준: </label>
+            <select
+              id="sort-select"
+              value={sortOrder}
+              onChange={(e) => {
+                setSortOrder(e.target.value);
+                setCurrentPage(1); // 정렬 기준 변경 시 첫 페이지로 이동
+              }}
+            >
+              <option value="">기본(인기순)</option>
+              <option value="vote_average.desc">평점 높은 순</option>
+              <option value="vote_average.asc">평점 낮은 순</option>
+              <option value="release_date.desc">최신 출시일</option>
+              <option value="release_date.asc">오래된 출시일</option>
+              <option value="original_title.asc">제목 오름차순</option>
+              <option value="original_title.desc">제목 내림차순</option>
+            </select>
+          </div>
+
           <ResetButton onClick={handleResetFilters}>초기화</ResetButton>
         </FilterContainer>
         <ToggleButton
