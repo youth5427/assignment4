@@ -12,21 +12,28 @@ import Popular from "./pages/Popular";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(null); // 초기 null로 설정
+  const [currentUser, setCurrentUser] = useState(null);
 
-  // localStorage 값과 상태 동기화
   useEffect(() => {
-    setIsAuthenticated(localStorage.getItem("isAuthenticated") === "true");
+    const authStatus = localStorage.getItem("isAuthenticated") === "true";
+    const user = localStorage.getItem("currentUser");
+    setIsAuthenticated(authStatus);
+    setCurrentUser(authStatus && user ? user : null);
   }, []);
 
-  const handleLogin = () => {
+  const handleLogin = (userEmail) => {
     localStorage.setItem("isAuthenticated", "true");
+    localStorage.setItem("currentUser", userEmail);
     setIsAuthenticated(true);
+    setCurrentUser(userEmail);
   };
 
   const handleLogout = () => {
     localStorage.setItem("isAuthenticated", "false");
+    localStorage.removeItem("currentUser");
     setIsAuthenticated(false);
+    setCurrentUser(null);
   };
 
   return (
@@ -36,7 +43,7 @@ function App() {
         <Route
           path="/"
           element={
-            isAuthenticated ? (
+            isAuthenticated === null ? null : isAuthenticated ? (
               <Navigate to="/Home" replace />
             ) : (
               <Navigate to="/Signin" replace />
@@ -44,15 +51,24 @@ function App() {
           }
         />
 
-        {/* 로그인 페이지 */}
-        <Route path="/Signin" element={<SignIn onLogin={handleLogin} />} />
+        {/* 로그인 상태에서 비정상적으로 /Signin으로 접근 방지 */}
+        <Route
+          path="/Signin"
+          element={
+            isAuthenticated ? (
+              <Navigate to="/Home" replace />
+            ) : (
+              <SignIn onLogin={handleLogin} />
+            )
+          }
+        />
 
         {/* 보호된 Home 페이지 */}
         <Route
           path="/Home"
           element={
             <ProtectedRoute isAuthenticated={isAuthenticated}>
-              <Home onLogout={handleLogout} />
+              <Home currentUser={currentUser} onLogout={handleLogout} />
             </ProtectedRoute>
           }
         />
@@ -62,7 +78,7 @@ function App() {
           path="/Wishlist"
           element={
             <ProtectedRoute isAuthenticated={isAuthenticated}>
-              <Wishlist onLogout={handleLogout} />
+              <Wishlist currentUser={currentUser} onLogout={handleLogout} />
             </ProtectedRoute>
           }
         />
@@ -72,7 +88,7 @@ function App() {
           path="/Popular"
           element={
             <ProtectedRoute isAuthenticated={isAuthenticated}>
-              <Popular onLogout={handleLogout} />
+              <Popular currentUser={currentUser} onLogout={handleLogout} />
             </ProtectedRoute>
           }
         />

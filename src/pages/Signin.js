@@ -202,9 +202,9 @@ function Signin({ onLogin }) {
 
       if (user) {
         localStorage.setItem("isAuthenticated", "true");
-        localStorage.setItem("currentUser", user.email);
         localStorage.setItem("userPassword", user.password);
-        onLogin();
+        console.log("로그인성공!", user.email);
+        onLogin(user.email);
         setMessage("로그인 성공!");
         setIsLoading(false);
         navigate("/Home", { replace: true }); // 정확한 타이밍에 리디렉션

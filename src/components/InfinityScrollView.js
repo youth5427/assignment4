@@ -66,6 +66,20 @@ function InfinityScrollView({ fetchMovies, movies, loading }) {
     setShowScrollToTop(scrollTop > 200);
   };
 
+  // 초기 데이터 로드 후 화면 확인
+  useEffect(() => {
+    const checkContentHeight = () => {
+      const { scrollHeight, clientHeight } = document.documentElement;
+      // 화면에 데이터가 부족하면 추가 데이터 요청
+      if (!loading && scrollHeight <= clientHeight) {
+        fetchMovies();
+      }
+    };
+
+    checkContentHeight(); // 초기 체크
+  }, [movies, loading, fetchMovies]);
+
+  // 스크롤 이벤트 등록 및 해제
   useEffect(() => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
