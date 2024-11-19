@@ -8,7 +8,6 @@ function Header() {
   const [recentSearches, setRecentSearches] = useState([]);
   const [showRecentSearches, setShowRecentSearches] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768); // 모바일 여부 판단
-  const [showMenu, setShowMenu] = useState(false); // 모바일 메뉴 상태
 
   useEffect(() => {
     // 현재 로그인한 사용자 가져오기
@@ -47,6 +46,7 @@ function Header() {
 
   const handleSearch = () => {
     if (searchQuery.trim()) {
+      // 검색어 저장
       const updatedSearches = [
         searchQuery,
         ...recentSearches.filter((term) => term !== searchQuery),
@@ -54,10 +54,12 @@ function Header() {
       localStorage.setItem(
         "recentSearches",
         JSON.stringify(updatedSearches.slice(0, 5))
-      );
+      ); // 최대 5개 저장
       setRecentSearches(updatedSearches.slice(0, 5));
+
+      // 검색 실행
       navigate(`/Search?query=${encodeURIComponent(searchQuery)}`);
-      setShowRecentSearches(false);
+      setShowRecentSearches(false); // 검색 기록 숨김
     }
   };
 
@@ -70,16 +72,12 @@ function Header() {
   const handleRecentSearchClick = (query) => {
     setSearchQuery(query);
     navigate(`/Search?query=${encodeURIComponent(query)}`);
-    setShowRecentSearches(false);
+    setShowRecentSearches(false); // 검색 기록 숨김
   };
 
   const handleClearSearches = () => {
     localStorage.removeItem("recentSearches");
     setRecentSearches([]);
-  };
-
-  const toggleMenu = () => {
-    setShowMenu(!showMenu);
   };
 
   const styles = {
@@ -108,8 +106,12 @@ function Header() {
     navLinks: {
       listStyle: "none",
       display: "flex",
-      flexDirection: "row",
       gap: "20px",
+    },
+    navLink: {
+      color: "white",
+      textDecoration: "none",
+      fontSize: "1.1rem",
     },
     logoutButton: {
       background: "none",
@@ -119,18 +121,10 @@ function Header() {
       cursor: "pointer",
       marginLeft: "20px",
     },
-    navLink: {
-      color: "white",
-      textDecoration: "none",
-      fontSize: "1.1rem",
-      cursor: "pointer",
-    },
-    menuButton: {
-      background: "none",
-      border: "none",
-      color: "white",
-      fontSize: "1.1rem",
-      cursor: "pointer",
+    leftNav: {
+      display: "flex",
+      gap: "20px",
+      alignItems: "center",
     },
     rightNav: {
       display: "flex",
@@ -138,25 +132,10 @@ function Header() {
       gap: "10px",
       marginRight: "20px", // 오른쪽 마진 추가
     },
-    dropdownMenu: {
-      listStyle: "none",
-      display: "flex",
-      flexDirection: "column",
-      gap: "10px",
-      backgroundColor: "#333",
-      padding: "10px",
-      borderRadius: "5px",
-      position: "absolute",
-      top: "60px",
-      left: "20px",
-      zIndex: 1000,
-      width: "150px",
-      boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
-    },
     searchContainer: {
       position: "relative",
       flex: "1",
-      maxWidth: isMobile ? "150px" : "300px",
+      maxWidth: isMobile ? "150px" : "300px", // 모바일에서 검색창 너비 조정
     },
     searchInput: {
       padding: "5px",
@@ -202,82 +181,42 @@ function Header() {
   return (
     <header style={styles.header}>
       <div style={styles.headerContent}>
-        {/* PC 환경에서 항상 보이는 네비게이션 */}
-        {!isMobile && (
-          <nav>
-            <ul style={styles.navLinks}>
+        {/* 왼쪽 내비게이션 */}
+        <nav style={styles.leftNav}>
+          <ul style={styles.navLinks}>
+            {isMobile && ( // 모바일에서는 홈 버튼만 표시
               <li>
                 <a href="/Home" style={styles.navLink}>
                   홈
                 </a>
               </li>
-              <li>
-                <a href="/Popular" style={styles.navLink}>
-                  인기 영화
-                </a>
-              </li>
-              <li>
-                <a href="/Search" style={styles.navLink}>
-                  찾아보기
-                </a>
-              </li>
-              <li>
-                <a href="/Wishlist" style={styles.navLink}>
-                  찜한 리스트
-                </a>
-              </li>
-            </ul>
-          </nav>
-        )}
-
-        {/* 모바일 환경에서 메뉴 버튼 */}
-        {isMobile && (
-          <>
-            <button onClick={toggleMenu} style={styles.menuButton}>
-              메뉴
-            </button>
-            {showMenu && (
-              <ul style={styles.dropdownMenu}>
+            )}
+            {!isMobile && ( // 모바일에서는 "홈" 버튼만 보이도록
+              <>
                 <li>
-                  <a
-                    href="/Home"
-                    style={styles.navLink}
-                    onClick={() => setShowMenu(false)}
-                  >
+                  <a href="/Home" style={styles.navLink}>
                     홈
                   </a>
                 </li>
                 <li>
-                  <a
-                    href="/Popular"
-                    style={styles.navLink}
-                    onClick={() => setShowMenu(false)}
-                  >
+                  <a href="/Popular" style={styles.navLink}>
                     인기 영화
                   </a>
                 </li>
                 <li>
-                  <a
-                    href="/Search"
-                    style={styles.navLink}
-                    onClick={() => setShowMenu(false)}
-                  >
+                  <a href="/Search" style={styles.navLink}>
                     찾아보기
                   </a>
                 </li>
                 <li>
-                  <a
-                    href="/Wishlist"
-                    style={styles.navLink}
-                    onClick={() => setShowMenu(false)}
-                  >
+                  <a href="/Wishlist" style={styles.navLink}>
                     찜한 리스트
                   </a>
                 </li>
-              </ul>
+              </>
             )}
-          </>
-        )}
+          </ul>
+        </nav>
 
         {/* 검색창 */}
         <div style={styles.searchContainer}>
