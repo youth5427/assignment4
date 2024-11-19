@@ -10,13 +10,26 @@ const LikeButton = ({
   const [isLiked, setIsLiked] = useState(false);
 
   useEffect(() => {
-    const storedMovies = JSON.parse(localStorage.getItem("likedMovies")) || [];
-    setLikedMovies(storedMovies);
-    setIsLiked(storedMovies.some((m) => m.id === movie.id));
+    const currentUser = localStorage.getItem("currentUser");
+    if (currentUser) {
+      const userWishlistKey = `wishlist_${currentUser}`;
+      const storedMovies =
+        JSON.parse(localStorage.getItem(userWishlistKey)) || [];
+      setLikedMovies(storedMovies);
+      setIsLiked(storedMovies.some((m) => m.id === movie.id));
+    }
   }, [movie.id]);
 
   const handleLike = () => {
-    const storedMovies = JSON.parse(localStorage.getItem("likedMovies")) || [];
+    const currentUser = localStorage.getItem("currentUser");
+    if (!currentUser) {
+      alert("로그인이 필요합니다!");
+      return;
+    }
+
+    const userWishlistKey = `wishlist_${currentUser}`;
+    const storedMovies =
+      JSON.parse(localStorage.getItem(userWishlistKey)) || [];
     const isAlreadyLiked = storedMovies.some((m) => m.id === movie.id);
 
     let updatedMovies;
@@ -28,7 +41,7 @@ const LikeButton = ({
       alert(`${movie.title}이(가) 저장되었습니다!`);
     }
 
-    localStorage.setItem("likedMovies", JSON.stringify(updatedMovies));
+    localStorage.setItem(userWishlistKey, JSON.stringify(updatedMovies));
     setLikedMovies(updatedMovies);
     setIsLiked(!isAlreadyLiked);
   };
