@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 function Header() {
   const navigate = useNavigate();
   const [currentUser, setCurrentUser] = useState(null);
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     // 현재 로그인한 사용자 가져오기
@@ -24,6 +25,12 @@ function Header() {
     setCurrentUser(null);
     navigate("/Signin"); // 로그인 페이지로 이동
     window.location.reload(); // 페이지 새로고침으로 /Signin으로 정상적으로 이동
+  };
+
+  const handleSearch = () => {
+    if (searchQuery.trim()) {
+      navigate(`/Search?query=${encodeURIComponent(searchQuery)}`);
+    }
   };
 
   const styles = {
@@ -75,11 +82,27 @@ function Header() {
     rightNav: {
       display: "flex",
       alignItems: "center",
+      gap: "10px",
     },
     userName: {
       fontSize: "1.1rem",
       color: "#ddd",
       fontWeight: "bold",
+    },
+    searchInput: {
+      padding: "5px",
+      borderRadius: "5px",
+      border: "1px solid #ddd",
+      fontSize: "1rem",
+    },
+    searchButton: {
+      padding: "5px 10px",
+      borderRadius: "5px",
+      border: "none",
+      backgroundColor: "#444",
+      color: "white",
+      fontSize: "1rem",
+      cursor: "pointer",
     },
   };
 
@@ -112,8 +135,20 @@ function Header() {
           </ul>
         </nav>
 
-        {/* 오른쪽 로그아웃 및 사용자 이름 */}
+        {/* 검색 기능 */}
         <div style={styles.rightNav}>
+          <input
+            type="text"
+            placeholder="검색..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            style={styles.searchInput}
+          />
+          <button onClick={handleSearch} style={styles.searchButton}>
+            검색
+          </button>
+
+          {/* 사용자 이름 및 로그아웃 */}
           {currentUser && <span style={styles.userName}>{currentUser}</span>}
           <p> 님</p>
           <button onClick={handleLogout} style={styles.logoutButton}>
