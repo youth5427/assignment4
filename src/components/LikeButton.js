@@ -6,7 +6,7 @@ const LikeButton = ({
   size = "40px",
   fontSize = "1.2rem",
 }) => {
-  // const [likedMovies, setLikedMovies] = useState([]);
+  const [likedMovies, setLikedMovies] = useState([]);
   const [isLiked, setIsLiked] = useState(false);
 
   useEffect(() => {
