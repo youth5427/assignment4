@@ -33,6 +33,12 @@ function Header() {
     }
   };
 
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      handleSearch(); // Enter 키를 누르면 검색 실행
+    }
+  };
+
   const styles = {
     header: {
       display: "flex",
@@ -142,6 +148,7 @@ function Header() {
             placeholder="검색..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
+            onKeyDown={handleKeyDown} // Enter 키 이벤트 추가
             style={styles.searchInput}
           />
           <button onClick={handleSearch} style={styles.searchButton}>
