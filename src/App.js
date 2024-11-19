@@ -42,7 +42,7 @@ function App() {
       <Routes>
         {/* 기본 경로 */}
         <Route
-          path="/"
+          path="/assignment2"
           element={
             isAuthenticated === null ? null : isAuthenticated ? (
               <Navigate to="/Home" replace />
