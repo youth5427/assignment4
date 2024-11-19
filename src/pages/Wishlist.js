@@ -19,8 +19,12 @@ function Wishlist() {
   const [wishlistMovies, setWishlistMovies] = useState([]);
 
   useEffect(() => {
-    const storedMovies = JSON.parse(localStorage.getItem("likedMovies")) || [];
-    setWishlistMovies(storedMovies);
+    const currentUser = localStorage.getItem("currentUser");
+    if (currentUser) {
+      const userWishlist =
+        JSON.parse(localStorage.getItem(`wishlist_${currentUser}`)) || [];
+      setWishlistMovies(userWishlist);
+    }
   }, []);
 
   return (
