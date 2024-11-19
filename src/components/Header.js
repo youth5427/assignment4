@@ -105,7 +105,7 @@ function Header() {
     },
     navLinks: {
       listStyle: "none",
-      display: isMobile ? "none" : "flex", // 모바일에서는 숨김
+      display: "flex",
       gap: "20px",
     },
     navLink: {
@@ -184,6 +184,13 @@ function Header() {
         {/* 왼쪽 내비게이션 */}
         <nav style={styles.leftNav}>
           <ul style={styles.navLinks}>
+            {isMobile && ( // 모바일에서는 홈 버튼만 표시
+              <li>
+                <a href="/Home" style={styles.navLink}>
+                  홈
+                </a>
+              </li>
+            )}
             {!isMobile && ( // 모바일에서는 "홈" 버튼만 보이도록
               <>
                 <li>
@@ -207,13 +214,6 @@ function Header() {
                   </a>
                 </li>
               </>
-            )}
-            {isMobile && ( // 모바일에서는 홈 버튼만 표시
-              <li>
-                <a href="/Home" style={styles.navLink}>
-                  홈
-                </a>
-              </li>
             )}
           </ul>
         </nav>
