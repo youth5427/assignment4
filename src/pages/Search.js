@@ -272,7 +272,7 @@ function Search() {
           Infinity Scroll
         </ToggleButton>
       </ViewToggleContainer>
-      <h1></h1>
+      <h1>Search Results</h1>
       {viewMode === "table" ? (
         <TableView
           movies={movies}
