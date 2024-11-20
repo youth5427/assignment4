@@ -22,7 +22,7 @@ function Wishlist() {
     const currentUser = localStorage.getItem("currentUser");
     if (currentUser) {
       const userWishlist =
-        JSON.parse(localStorage.getItem(`wishlist_${currentUser}`)) || [];
+        JSON.parse(localStorage.getItem(`${currentUser}_wishlist`)) || [];
       setWishlistMovies(userWishlist);
     }
   }, []);
