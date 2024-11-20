@@ -23,10 +23,11 @@ const FilterContainer = styled.div`
   background-color: #ffebcd;
   padding: 5px 10px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 그림자 추가 */
+  height: ${(props) => (props.isMobile ? "60px" : "30px")}; /* 높이 변경 */
 `;
 
 const ResetButton = styled.button`
-  height: 30px;
+  height: ${(props) => (props.isMobile ? "60px" : "30px")}; /* 높이 변경 */
 
   border: none;
   border-radius: 5px;
@@ -82,9 +83,23 @@ function Search() {
   const [selectedGenre, setSelectedGenre] = useState("");
   const [selectedRating, setSelectedRating] = useState("");
   const [sortOrder, setSortOrder] = useState("");
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768); // 모바일 여부 판단
 
   const [searchParams] = useSearchParams(); // URL에서 쿼리 파라미터 가져오기
   const searchQuery = searchParams.get("query") || ""; // query 파라미터 값
+
+  // 추가된 useEffect: 화면 크기 변경 시 isMobile 상태 업데이트
+  useEffect(() => {
+    // 윈도우 크기 변경 이벤트 추가
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
 
   // Fetch genres
   useEffect(() => {
@@ -201,10 +216,11 @@ function Search() {
   return (
     <PageContainer>
       <Header />
+      <h1></h1>
       <ViewToggleContainer>
         {/** 검색어가 없을 때만 필터 컨테이너 표시 */}
         {!searchQuery && (
-          <FilterContainer>
+          <FilterContainer isMobile={isMobile}>
             <div>
               <label htmlFor="genre-select">장르 선택: </label>
               <select
@@ -244,6 +260,7 @@ function Search() {
                 })}
               </select>
             </div>
+
             <div>
               <label htmlFor="sort-select">정렬 기준: </label>
               <select
@@ -260,26 +277,31 @@ function Search() {
                 <option value="release_date.desc">최신 출시일</option>
                 <option value="release_date.asc">오래된 출시일</option>
               </select>
-              <button onClick={handleResetFilters}>필터 초기화</button>
             </div>
-            <ResetButton onClick={handleResetFilters}>초기화</ResetButton>
+            <ResetButton onClick={handleResetFilters} isMobile={isMobile}>
+              초기화
+            </ResetButton>
           </FilterContainer>
         )}
-        <ToggleButton
-          active={viewMode === "table"}
-          onClick={() => setViewMode("table")}
-        >
-          Table View
-        </ToggleButton>
-        <ToggleButton
-          active={viewMode === "infinity"}
-          onClick={() => {
-            setCurrentPage(1);
-            setViewMode("infinity");
-          }}
-        >
-          Infinity Scroll
-        </ToggleButton>
+        {!isMobile && (
+          <>
+            <ToggleButton
+              active={viewMode === "table"}
+              onClick={() => setViewMode("table")}
+            >
+              Table View
+            </ToggleButton>
+            <ToggleButton
+              active={viewMode === "infinity"}
+              onClick={() => {
+                setCurrentPage(1);
+                setViewMode("infinity");
+              }}
+            >
+              Infinity Scroll
+            </ToggleButton>
+          </>
+        )}
       </ViewToggleContainer>
       {viewMode === "table" ? (
         <TableView
