@@ -155,7 +155,7 @@ function Header() {
     searchContainer: {
       position: "relative",
       flex: "1",
-      maxWidth: isMobile ? "300x" : "300px",
+      maxWidth: "500px",
       margin: "0px 30px",
     },
     searchInput: {
