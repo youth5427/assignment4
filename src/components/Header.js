@@ -313,8 +313,14 @@ function Header() {
 
         {/* 사용자 및 로그아웃 */}
         <div style={styles.rightNav}>
-          {currentUser && <span style={styles.userName}>{currentUser}</span>}
-          <p> 님</p>
+          {currentUser && (
+            <>
+              <span style={styles.userName}>
+                {currentUser.split("@")[0]} {/* @ 앞부분만 표시 */}
+              </span>
+              <p> 님</p>
+            </>
+          )}
           <button onClick={handleLogout} style={styles.logoutButton}>
             Logout
           </button>
