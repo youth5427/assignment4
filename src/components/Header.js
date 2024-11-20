@@ -9,21 +9,17 @@ function Header() {
   const [showRecentSearches, setShowRecentSearches] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768); // 모바일 여부 판단
   const [showMenu, setShowMenu] = useState(false); // 모바일 메뉴 상태
-
+  const getUserKey = (username) => `${username}_recentSearches`;
   useEffect(() => {
-    // 현재 로그인한 사용자 가져오기
     const storedUser = localStorage.getItem("currentUser");
     if (storedUser) {
-      const username = storedUser.split("@")[0];
-      setCurrentUser(username);
+      setCurrentUser(storedUser); // 이메일 전체를 저장
+      const userKey = getUserKey(storedUser); // 이메일 형식으로 키 생성
+      const storedSearches = JSON.parse(localStorage.getItem(userKey)) || [];
+      setRecentSearches(storedSearches);
     } else {
       setCurrentUser("경고! 잘못된 접근입니다.");
     }
-
-    // 최근 검색어 가져오기
-    const storedSearches =
-      JSON.parse(localStorage.getItem("recentSearches")) || [];
-    setRecentSearches(storedSearches);
 
     // 윈도우 크기 변경 이벤트 추가
     const handleResize = () => {
@@ -47,14 +43,16 @@ function Header() {
 
   const handleSearch = () => {
     if (searchQuery.trim()) {
+      const userKey = getUserKey(currentUser); // 이메일 형식으로 키 생성
+      const storedSearches = JSON.parse(localStorage.getItem(userKey)) || [];
       const updatedSearches = [
         searchQuery,
-        ...recentSearches.filter((term) => term !== searchQuery),
+        ...storedSearches.filter((term) => term !== searchQuery),
       ];
       localStorage.setItem(
-        "recentSearches",
+        userKey,
         JSON.stringify(updatedSearches.slice(0, 5))
-      );
+      ); // 최대 5개 저장
       setRecentSearches(updatedSearches.slice(0, 5));
       navigate(`/Search?query=${encodeURIComponent(searchQuery)}`);
       setShowRecentSearches(false);
@@ -74,7 +72,8 @@ function Header() {
   };
 
   const handleClearSearches = () => {
-    localStorage.removeItem("recentSearches");
+    const userKey = getUserKey(currentUser); // 이메일 형식으로 키 생성
+    localStorage.removeItem(userKey); // 사용자별 검색어 삭제
     setRecentSearches([]);
   };
 
