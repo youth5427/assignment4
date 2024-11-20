@@ -48,6 +48,7 @@ const ResetButton = styled.button`
 const ViewToggleContainer = styled.div`
   position: fixed;
   top: 110px;
+  margin-left: 20px;
   right: 20px;
   display: flex;
   gap: 10px;
