@@ -287,12 +287,15 @@ function Header() {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             onFocus={() => setShowRecentSearches(true)}
-            onBlur={() => setShowRecentSearches(false)}
+            onBlur={() => setTimeout(() => setShowRecentSearches(false), 100)} // 지연 처리
             onKeyDown={handleKeyDown}
             style={styles.searchInput}
           />
           {showRecentSearches && recentSearches.length > 0 && (
-            <ul style={styles.recentSearches}>
+            <ul
+              style={styles.recentSearches}
+              onMouseDown={(e) => e.preventDefault()} // onBlur 방지
+            >
               {recentSearches.map((query, index) => (
                 <li
                   key={index}
