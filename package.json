@@ -2,6 +2,7 @@
   "name": "assignment2",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://youth5427.github.io/assignment2",
   "dependencies": {
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
