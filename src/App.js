@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
 import {
-  BrowserRouter as Router,
+  HashRouter as Router,
   Routes,
   Route,
   Navigate,
 } from "react-router-dom";
+
 import SignIn from "./pages/Signin";
 import Home from "./pages/Home";
 import Wishlist from "./pages/Wishlist";
@@ -13,7 +14,8 @@ import Search from "./pages/Search";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(null); // 초기 null로 설정
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [currentUser, setCurrentUser] = useState(null);
 
   useEffect(() => {
@@ -21,6 +23,7 @@ function App() {
     const user = localStorage.getItem("currentUser");
     setIsAuthenticated(authStatus);
     setCurrentUser(authStatus && user ? user : null);
+    setIsLoading(false);
   }, []);
 
   const handleLogin = (userEmail) => {
@@ -31,79 +34,74 @@ function App() {
   };
 
   const handleLogout = () => {
-    localStorage.setItem("isAuthenticated", "false");
+    localStorage.removeItem("isAuthenticated");
     localStorage.removeItem("currentUser");
     setIsAuthenticated(false);
     setCurrentUser(null);
   };
 
+  if (isLoading) {
+    return <div className="loading-overlay">Loading...</div>;
+  }
+
   return (
     <Router>
-      <Routes>
-        {/* 기본 경로 */}
-        <Route
-          path="/assignment2"
-          element={
-            isAuthenticated === null ? null : isAuthenticated ? (
-              <Navigate to="/Home" replace />
-            ) : (
-              <Navigate to="/Signin" replace />
-            )
-          }
-        />
-
-        {/* 로그인 상태에서 비정상적으로 /Signin으로 접근 방지 */}
-        <Route
-          path="/Signin"
-          element={
-            isAuthenticated ? (
-              <Navigate to="/Home" replace />
-            ) : (
-              <SignIn onLogin={handleLogin} />
-            )
-          }
-        />
-
-        {/* 보호된 Home 페이지 */}
-        <Route
-          path="/Home"
-          element={
-            <ProtectedRoute isAuthenticated={isAuthenticated}>
-              <Home currentUser={currentUser} onLogout={handleLogout} />
-            </ProtectedRoute>
-          }
-        />
-
-        {/* 보호된 Wishlist 페이지 */}
-        <Route
-          path="/Wishlist"
-          element={
-            <ProtectedRoute isAuthenticated={isAuthenticated}>
-              <Wishlist currentUser={currentUser} onLogout={handleLogout} />
-            </ProtectedRoute>
-          }
-        />
-
-        {/* 보호된 Popular 페이지 */}
-        <Route
-          path="/Popular"
-          element={
-            <ProtectedRoute isAuthenticated={isAuthenticated}>
-              <Popular currentUser={currentUser} onLogout={handleLogout} />
-            </ProtectedRoute>
-          }
-        />
-
-        {/* 보호된 Search 페이지 */}
-        <Route
-          path="/Search"
-          element={
-            <ProtectedRoute isAuthenticated={isAuthenticated}>
-              <Search currentUser={currentUser} onLogout={handleLogout} />
-            </ProtectedRoute>
-          }
-        />
-      </Routes>
+      <div>
+        <Routes>
+          <Route
+            path="/"
+            element={
+              isAuthenticated ? (
+                <Navigate to="/Home" replace />
+              ) : (
+                <Navigate to="/Signin" replace />
+              )
+            }
+          />
+          <Route
+            path="/Signin"
+            element={
+              isAuthenticated ? (
+                <Navigate to="/Home" replace />
+              ) : (
+                <SignIn onLogin={handleLogin} />
+              )
+            }
+          />
+          <Route
+            path="/Home"
+            element={
+              <ProtectedRoute isAuthenticated={isAuthenticated}>
+                <Home currentUser={currentUser} onLogout={handleLogout} />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/Wishlist"
+            element={
+              <ProtectedRoute isAuthenticated={isAuthenticated}>
+                <Wishlist currentUser={currentUser} onLogout={handleLogout} />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/Popular"
+            element={
+              <ProtectedRoute isAuthenticated={isAuthenticated}>
+                <Popular currentUser={currentUser} onLogout={handleLogout} />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/Search"
+            element={
+              <ProtectedRoute isAuthenticated={isAuthenticated}>
+                <Search currentUser={currentUser} onLogout={handleLogout} />
+              </ProtectedRoute>
+            }
+          />
+        </Routes>
+      </div>
     </Router>
   );
 }

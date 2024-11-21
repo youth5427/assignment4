@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 function Header() {
   const navigate = useNavigate();
@@ -207,24 +207,24 @@ function Header() {
           <nav>
             <ul style={styles.navLinks}>
               <li>
-                <a href="/Home" style={styles.navLink}>
+                <Link to="/Home" style={styles.navLink}>
                   홈
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="/Popular" style={styles.navLink}>
+                <Link to="/Popular" style={styles.navLink}>
                   인기 영화
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="/Search" style={styles.navLink}>
+                <Link to="/Search" style={styles.navLink}>
                   찾아보기
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="/Wishlist" style={styles.navLink}>
+                <Link to="/Wishlist" style={styles.navLink}>
                   찜한 리스트
-                </a>
+                </Link>
               </li>
             </ul>
           </nav>
@@ -239,40 +239,40 @@ function Header() {
             {showMenu && (
               <ul style={styles.dropdownMenu}>
                 <li>
-                  <a
-                    href="/Home"
+                  <Link
+                    to="/Home"
                     style={styles.navLink}
                     onClick={() => setShowMenu(false)}
                   >
                     홈
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a
-                    href="/Popular"
+                  <Link
+                    to="/Popular"
                     style={styles.navLink}
                     onClick={() => setShowMenu(false)}
                   >
                     인기 영화
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a
-                    href="/Search"
+                  <Link
+                    to="/Search"
                     style={styles.navLink}
                     onClick={() => setShowMenu(false)}
                   >
                     찾아보기
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a
-                    href="/Wishlist"
+                  <Link
+                    to="/Wishlist"
                     style={styles.navLink}
                     onClick={() => setShowMenu(false)}
                   >
                     찜한 리스트
-                  </a>
+                  </Link>
                 </li>
               </ul>
             )}
