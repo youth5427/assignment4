@@ -12,7 +12,7 @@ const LikeButton = ({
   useEffect(() => {
     const currentUser = localStorage.getItem("currentUser");
     if (currentUser) {
-      const userWishlistKey = `wishlist_${currentUser}`;
+      const userWishlistKey = `${currentUser}_wishlist`;
       const storedMovies =
         JSON.parse(localStorage.getItem(userWishlistKey)) || [];
       setLikedMovies(storedMovies);
@@ -27,7 +27,7 @@ const LikeButton = ({
       return;
     }
 
-    const userWishlistKey = `wishlist_${currentUser}`;
+    const userWishlistKey = `${currentUser}_wishlist`;
     const storedMovies =
       JSON.parse(localStorage.getItem(userWishlistKey)) || [];
     const isAlreadyLiked = storedMovies.some((m) => m.id === movie.id);

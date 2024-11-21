@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 function Header() {
   const navigate = useNavigate();
@@ -8,18 +8,21 @@ function Header() {
   const [recentSearches, setRecentSearches] = useState([]);
   const [showRecentSearches, setShowRecentSearches] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768); // 모바일 여부 판단
-  const [showMenu, setShowMenu] = useState(false); // 모바일 메뉴 상태
-  const getUserKey = (username) => `${username}_recentSearches`;
+
   useEffect(() => {
+    // 현재 로그인한 사용자 가져오기
     const storedUser = localStorage.getItem("currentUser");
     if (storedUser) {
-      setCurrentUser(storedUser); // 이메일 전체를 저장
-      const userKey = getUserKey(storedUser); // 이메일 형식으로 키 생성
-      const storedSearches = JSON.parse(localStorage.getItem(userKey)) || [];
-      setRecentSearches(storedSearches);
+      const username = storedUser.split("@")[0];
+      setCurrentUser(username);
     } else {
       setCurrentUser("경고! 잘못된 접근입니다.");
     }
+
+    // 최근 검색어 가져오기
+    const storedSearches =
+      JSON.parse(localStorage.getItem("recentSearches")) || [];
+    setRecentSearches(storedSearches);
 
     // 윈도우 크기 변경 이벤트 추가
     const handleResize = () => {
@@ -43,19 +46,20 @@ function Header() {
 
   const handleSearch = () => {
     if (searchQuery.trim()) {
-      const userKey = getUserKey(currentUser); // 이메일 형식으로 키 생성
-      const storedSearches = JSON.parse(localStorage.getItem(userKey)) || [];
+      // 검색어 저장
       const updatedSearches = [
         searchQuery,
-        ...storedSearches.filter((term) => term !== searchQuery),
+        ...recentSearches.filter((term) => term !== searchQuery),
       ];
       localStorage.setItem(
-        userKey,
+        "recentSearches",
         JSON.stringify(updatedSearches.slice(0, 5))
       ); // 최대 5개 저장
       setRecentSearches(updatedSearches.slice(0, 5));
+
+      // 검색 실행
       navigate(`/Search?query=${encodeURIComponent(searchQuery)}`);
-      setShowRecentSearches(false);
+      setShowRecentSearches(false); // 검색 기록 숨김
     }
   };
 
@@ -68,17 +72,12 @@ function Header() {
   const handleRecentSearchClick = (query) => {
     setSearchQuery(query);
     navigate(`/Search?query=${encodeURIComponent(query)}`);
-    setShowRecentSearches(false);
+    setShowRecentSearches(false); // 검색 기록 숨김
   };
 
   const handleClearSearches = () => {
-    const userKey = getUserKey(currentUser); // 이메일 형식으로 키 생성
-    localStorage.removeItem(userKey); // 사용자별 검색어 삭제
+    localStorage.removeItem("recentSearches");
     setRecentSearches([]);
-  };
-
-  const toggleMenu = () => {
-    setShowMenu(!showMenu);
   };
 
   const styles = {
@@ -107,8 +106,12 @@ function Header() {
     navLinks: {
       listStyle: "none",
       display: "flex",
-      flexDirection: "row",
       gap: "20px",
+    },
+    navLink: {
+      color: "white",
+      textDecoration: "none",
+      fontSize: "1.1rem",
     },
     logoutButton: {
       background: "none",
@@ -118,18 +121,10 @@ function Header() {
       cursor: "pointer",
       marginLeft: "20px",
     },
-    navLink: {
-      color: "white",
-      textDecoration: "none",
-      fontSize: "1.1rem",
-      cursor: "pointer",
-    },
-    menuButton: {
-      background: "none",
-      border: "none",
-      color: "white",
-      fontSize: "1.1rem",
-      cursor: "pointer",
+    leftNav: {
+      display: "flex",
+      gap: "20px",
+      alignItems: "center",
     },
     rightNav: {
       display: "flex",
@@ -137,26 +132,10 @@ function Header() {
       gap: "10px",
       marginRight: "20px", // 오른쪽 마진 추가
     },
-    dropdownMenu: {
-      listStyle: "none",
-      display: "flex",
-      flexDirection: "column",
-      gap: "10px",
-      backgroundColor: "#333",
-      padding: "10px",
-      borderRadius: "5px",
-      position: "absolute",
-      top: "60px",
-      left: "20px",
-      zIndex: 1000,
-      width: "150px",
-      boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
-    },
     searchContainer: {
       position: "relative",
       flex: "1",
-      maxWidth: "500px",
-      margin: "0px 30px",
+      maxWidth: isMobile ? "150px" : "300px", // 모바일에서 검색창 너비 조정
     },
     searchInput: {
       padding: "5px",
@@ -202,82 +181,42 @@ function Header() {
   return (
     <header style={styles.header}>
       <div style={styles.headerContent}>
-        {/* PC 환경에서 항상 보이는 네비게이션 */}
-        {!isMobile && (
-          <nav>
-            <ul style={styles.navLinks}>
+        {/* 왼쪽 내비게이션 */}
+        <nav style={styles.leftNav}>
+          <ul style={styles.navLinks}>
+            {isMobile && ( // 모바일에서는 홈 버튼만 표시
               <li>
-                <Link to="/Home" style={styles.navLink}>
+                <a href="/Home" style={styles.navLink}>
                   홈
-                </Link>
+                </a>
               </li>
-              <li>
-                <Link to="/Popular" style={styles.navLink}>
-                  인기 영화
-                </Link>
-              </li>
-              <li>
-                <Link to="/Search" style={styles.navLink}>
-                  찾아보기
-                </Link>
-              </li>
-              <li>
-                <Link to="/Wishlist" style={styles.navLink}>
-                  찜한 리스트
-                </Link>
-              </li>
-            </ul>
-          </nav>
-        )}
-
-        {/* 모바일 환경에서 메뉴 버튼 */}
-        {isMobile && (
-          <>
-            <button onClick={toggleMenu} style={styles.menuButton}>
-              메뉴
-            </button>
-            {showMenu && (
-              <ul style={styles.dropdownMenu}>
-                <li>
-                  <Link
-                    to="/Home"
-                    style={styles.navLink}
-                    onClick={() => setShowMenu(false)}
-                  >
-                    홈
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    to="/Popular"
-                    style={styles.navLink}
-                    onClick={() => setShowMenu(false)}
-                  >
-                    인기 영화
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    to="/Search"
-                    style={styles.navLink}
-                    onClick={() => setShowMenu(false)}
-                  >
-                    찾아보기
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    to="/Wishlist"
-                    style={styles.navLink}
-                    onClick={() => setShowMenu(false)}
-                  >
-                    찜한 리스트
-                  </Link>
-                </li>
-              </ul>
             )}
-          </>
-        )}
+            {!isMobile && ( // 모바일에서는 "홈" 버튼만 보이도록
+              <>
+                <li>
+                  <a href="/Home" style={styles.navLink}>
+                    홈
+                  </a>
+                </li>
+                <li>
+                  <a href="/Popular" style={styles.navLink}>
+                    인기 영화
+                  </a>
+                </li>
+                <li>
+                  <a href="/Search" style={styles.navLink}>
+                    찾아보기
+                  </a>
+                </li>
+                <li>
+                  <a href="/Wishlist" style={styles.navLink}>
+                    찜한 리스트
+                  </a>
+                </li>
+              </>
+            )}
+          </ul>
+        </nav>
 
         {/* 검색창 */}
         <div style={styles.searchContainer}>
@@ -287,15 +226,12 @@ function Header() {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             onFocus={() => setShowRecentSearches(true)}
-            onBlur={() => setTimeout(() => setShowRecentSearches(false), 100)} // 지연 처리
+            onBlur={() => setShowRecentSearches(false)}
             onKeyDown={handleKeyDown}
             style={styles.searchInput}
           />
           {showRecentSearches && recentSearches.length > 0 && (
-            <ul
-              style={styles.recentSearches}
-              onMouseDown={(e) => e.preventDefault()} // onBlur 방지
-            >
+            <ul style={styles.recentSearches}>
               {recentSearches.map((query, index) => (
                 <li
                   key={index}
@@ -314,14 +250,8 @@ function Header() {
 
         {/* 사용자 및 로그아웃 */}
         <div style={styles.rightNav}>
-          {currentUser && (
-            <>
-              <span style={styles.userName}>
-                {currentUser.split("@")[0]} {/* @ 앞부분만 표시 */}
-              </span>
-              <p> 님</p>
-            </>
-          )}
+          {currentUser && <span style={styles.userName}>{currentUser}</span>}
+          <p> 님</p>
           <button onClick={handleLogout} style={styles.logoutButton}>
             Logout
           </button>
