@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom"; // URL에서 query 파라미터 읽기
 import styled from "styled-components";
 import axios from "axios";
 import Header from "../components/Header";
@@ -22,10 +23,11 @@ const FilterContainer = styled.div`
   background-color: #ffebcd;
   padding: 5px 10px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 그림자 추가 */
+  height: ${(props) => (props.isMobile ? "60px" : "30px")}; /* 높이 변경 */
 `;
 
 const ResetButton = styled.button`
-  height: 30px;
+  height: ${(props) => (props.isMobile ? "60px" : "30px")}; /* 높이 변경 */
 
   border: none;
   border-radius: 5px;
@@ -46,10 +48,11 @@ const ResetButton = styled.button`
 const ViewToggleContainer = styled.div`
   position: fixed;
   top: 110px;
+  margin-left: 20px;
   right: 20px;
   display: flex;
   gap: 10px;
-  z-index: 1000;
+  z-index: 1;
 `;
 
 const ToggleButton = styled.button`
@@ -70,7 +73,6 @@ const ToggleButton = styled.button`
     outline: none;
   }
 `;
-
 function Search() {
   const [movies, setMovies] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -80,8 +82,25 @@ function Search() {
   const userPassword = localStorage.getItem("userPassword");
   const [genres, setGenres] = useState([]);
   const [selectedGenre, setSelectedGenre] = useState("");
-  const [selectedRating, setSelectedRating] = useState(""); // 선택된 평점 상태 추가
-  const [sortOrder, setSortOrder] = useState(""); // 정렬 상태 추가
+  const [selectedRating, setSelectedRating] = useState("");
+  const [sortOrder, setSortOrder] = useState("");
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768); // 모바일 여부 판단
+
+  const [searchParams] = useSearchParams(); // URL에서 쿼리 파라미터 가져오기
+  const searchQuery = searchParams.get("query") || ""; // query 파라미터 값
+
+  // 추가된 useEffect: 화면 크기 변경 시 isMobile 상태 업데이트
+  useEffect(() => {
+    // 윈도우 크기 변경 이벤트 추가
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
 
   // Fetch genres
   useEffect(() => {
@@ -107,23 +126,26 @@ function Search() {
       const maxRating = minRating !== undefined ? minRating + 0.9 : undefined;
 
       const response = await axios.get(
-        "https://api.themoviedb.org/3/discover/movie",
+        searchQuery
+          ? "https://api.themoviedb.org/3/search/movie" // 검색어가 있을 때
+          : "https://api.themoviedb.org/3/discover/movie", // 검색어가 없을 때
         {
           params: {
             api_key: userPassword,
             language: "ko-KR",
             page,
-            with_genres: selectedGenre || undefined,
-            "vote_average.gte": minRating,
-            "vote_average.lte": maxRating,
-            sort_by: sortOrder || "popularity.desc", // 정렬 기준 적용
+            query: searchQuery || undefined, // 검색어 추가
+            with_genres: selectedGenre || undefined, // 선택된 장르
+            "vote_average.gte": minRating, // 최소 평점
+            "vote_average.lte": maxRating, // 최대 평점
+            sort_by: sortOrder || "popularity.desc", // 정렬 기준
           },
         }
       );
       setMovies(response.data.results);
       setTotalPages(response.data.total_pages);
     } catch (error) {
-      console.error("Error fetching popular movies:", error);
+      console.error("Error fetching movies:", error);
     }
   };
 
@@ -137,16 +159,19 @@ function Search() {
       const maxRating = minRating !== undefined ? minRating + 0.9 : undefined;
 
       const response = await axios.get(
-        "https://api.themoviedb.org/3/discover/movie",
+        searchQuery
+          ? "https://api.themoviedb.org/3/search/movie" // 검색어가 있을 때
+          : "https://api.themoviedb.org/3/discover/movie", // 검색어가 없을 때
         {
           params: {
             api_key: userPassword,
             language: "ko-KR",
             page: currentPage,
-            with_genres: selectedGenre || undefined,
-            "vote_average.gte": minRating,
-            "vote_average.lte": maxRating,
-            sort_by: sortOrder || "popularity.desc", // 정렬 기준 적용
+            query: searchQuery || undefined, // 검색어 추가
+            with_genres: selectedGenre || undefined, // 선택된 장르
+            "vote_average.gte": minRating, // 최소 평점
+            "vote_average.lte": maxRating, // 최대 평점
+            sort_by: sortOrder || "popularity.desc", // 정렬 기준
           },
         }
       );
@@ -168,6 +193,7 @@ function Search() {
     }
   };
 
+  // 검색어 및 필터 변경 시 데이터 새로 요청
   useEffect(() => {
     setMovies([]);
     setCurrentPage(1);
@@ -176,7 +202,7 @@ function Search() {
     } else {
       fetchMoviesForTable(1);
     }
-  }, [viewMode, selectedGenre, selectedRating, sortOrder]);
+  }, [viewMode, selectedGenre, selectedRating, sortOrder, searchQuery]);
 
   const handleResetFilters = () => {
     if (window.confirm("필터가 초기화 됩니다.")) {
@@ -185,94 +211,99 @@ function Search() {
       setSortOrder("");
       setCurrentPage(1);
       window.scrollTo({ top: 0, behavior: "smooth" }); // 상단으로 스크롤
-    } else {
     }
   };
 
   return (
     <PageContainer>
       <Header />
-
+      <h1></h1>
       <ViewToggleContainer>
-        <FilterContainer>
-          <div>
-            <label htmlFor="genre-select">장르 선택: </label>
-            <select
-              id="genre-select"
-              value={selectedGenre}
-              onChange={(e) => {
-                setSelectedGenre(e.target.value);
-                setCurrentPage(1);
-              }}
-            >
-              <option value="">전체</option>
-              {genres.map((genre) => (
-                <option key={genre.id} value={genre.id}>
-                  {genre.name}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div>
-            <label htmlFor="rating-select">평점 선택: </label>
-            <select
-              id="rating-select"
-              value={selectedRating}
-              onChange={(e) => {
-                setSelectedRating(e.target.value);
-                setCurrentPage(1);
-              }}
-            >
-              <option value="">전체</option>
-              {[...Array(10)].map((_, i) => {
-                const rating = 10 - i;
-                return (
-                  <option key={rating} value={rating}>
-                    {rating}점대
+        {/** 검색어가 없을 때만 필터 컨테이너 표시 */}
+        {!searchQuery && (
+          <FilterContainer isMobile={isMobile}>
+            <div>
+              <label htmlFor="genre-select">장르 선택: </label>
+              <select
+                id="genre-select"
+                value={selectedGenre}
+                onChange={(e) => {
+                  setSelectedGenre(e.target.value);
+                  setCurrentPage(1);
+                }}
+              >
+                <option value="">전체</option>
+                {genres.map((genre) => (
+                  <option key={genre.id} value={genre.id}>
+                    {genre.name}
                   </option>
-                );
-              })}
-            </select>
-          </div>
-          <div>
-            <label htmlFor="sort-select">정렬 기준: </label>
-            <select
-              id="sort-select"
-              value={sortOrder}
-              onChange={(e) => {
-                setSortOrder(e.target.value);
-                setCurrentPage(1); // 정렬 기준 변경 시 첫 페이지로 이동
+                ))}
+              </select>
+            </div>
+            <div>
+              <label htmlFor="rating-select">평점 선택: </label>
+              <select
+                id="rating-select"
+                value={selectedRating}
+                onChange={(e) => {
+                  setSelectedRating(e.target.value);
+                  setCurrentPage(1);
+                }}
+              >
+                <option value="">전체</option>
+                {[...Array(10)].map((_, i) => {
+                  const rating = 10 - i;
+                  return (
+                    <option key={rating} value={rating}>
+                      {rating}점대
+                    </option>
+                  );
+                })}
+              </select>
+            </div>
+
+            <div>
+              <label htmlFor="sort-select">정렬 기준: </label>
+              <select
+                id="sort-select"
+                value={sortOrder}
+                onChange={(e) => {
+                  setSortOrder(e.target.value);
+                  setCurrentPage(1);
+                }}
+              >
+                <option value="">기본(인기순)</option>
+                <option value="vote_average.desc">평점 높은 순</option>
+                <option value="vote_average.asc">평점 낮은 순</option>
+                <option value="release_date.desc">최신 출시일</option>
+                <option value="release_date.asc">오래된 출시일</option>
+              </select>
+            </div>
+            <ResetButton onClick={handleResetFilters} isMobile={isMobile}>
+              초기화
+            </ResetButton>
+          </FilterContainer>
+        )}
+        {!isMobile && (
+          <>
+            <ToggleButton
+              active={viewMode === "table"}
+              onClick={() => setViewMode("table")}
+            >
+              Table View
+            </ToggleButton>
+            <ToggleButton
+              active={viewMode === "infinity"}
+              onClick={() => {
+                setCurrentPage(1);
+                setViewMode("infinity");
               }}
             >
-              <option value="">기본(인기순)</option>
-              <option value="vote_average.desc">평점 높은 순</option>
-              <option value="vote_average.asc">평점 낮은 순</option>
-              <option value="release_date.desc">최신 출시일</option>
-              <option value="release_date.asc">오래된 출시일</option>
-              <option value="original_title.asc">제목 오름차순</option>
-              <option value="original_title.desc">제목 내림차순</option>
-            </select>
-          </div>
-
-          <ResetButton onClick={handleResetFilters}>초기화</ResetButton>
-        </FilterContainer>
-        <ToggleButton
-          active={viewMode === "table"}
-          onClick={() => setViewMode("table")}
-        >
-          Table View
-        </ToggleButton>
-        <ToggleButton
-          active={viewMode === "infinity"}
-          onClick={() => {
-            setCurrentPage(1);
-            setViewMode("infinity");
-          }}
-        >
-          Infinity Scroll
-        </ToggleButton>
+              Infinity Scroll
+            </ToggleButton>
+          </>
+        )}
       </ViewToggleContainer>
-      <h1>Search Results</h1>
       {viewMode === "table" ? (
         <TableView
           movies={movies}
@@ -285,10 +316,7 @@ function Search() {
         />
       ) : (
         <InfinityScrollView
-          onPageChange={() => {
-            setCurrentPage(1);
-          }}
-          fetchMovies={fetchMoviesForInfinity}
+          fetchMovies={() => fetchMoviesForInfinity()}
           movies={movies}
           loading={loading}
         />
