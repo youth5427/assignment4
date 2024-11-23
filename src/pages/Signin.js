@@ -275,8 +275,8 @@ function Signin({ onLogin }) {
                 ? "이미 계정이 있나요? 로그인"
                 : "계정이 없나요? 회원가입"}
             </LinkText>
-            <Footer />
           </Container>
+          <Footer />
         </Background>
       )}
     </>
