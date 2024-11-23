@@ -78,7 +78,7 @@ function MovieRow({
 }) {
   const [movies, setMovies] = useState([]);
   const rowRef = useRef(null);
-
+  const pressTimer = useRef(null);
   useEffect(() => {
     const fetchMovies = async () => {
       if (!fetchUrl) {
@@ -130,6 +130,25 @@ function MovieRow({
     }
   };
 
+  const handleLongPress = (movie) => {
+    const naverSearchUrl = `https://search.naver.com/search.naver?query=영화 ${encodeURIComponent(
+      movie.title
+    )}`;
+    window.open(naverSearchUrl, "_blank");
+  };
+
+  const handlePressStart = (movie) => {
+    // 길게 누르기 타이머 설정
+    pressTimer.current = setTimeout(() => handleLongPress(movie), 500); // 1초(1000ms) 동안 눌렀을 때 이벤트 발생
+  };
+
+  const handlePressEnd = () => {
+    // 길게 누르기 타이머 초기화
+    if (pressTimer.current) {
+      clearTimeout(pressTimer.current);
+    }
+  };
+
   return (
     <MovieRowContainer>
       <Title>{title}</Title>
@@ -142,6 +161,11 @@ function MovieRow({
             <MovieThumbnail
               src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
               alt={movie.title}
+              onMouseDown={() => handlePressStart(movie)} // 마우스 눌렀을 때 타이머 시작
+              onMouseUp={handlePressEnd} // 마우스 뗄 때 타이머 초기화
+              onMouseLeave={handlePressEnd} // 마우스가 벗어나면 타이머 초기화
+              onTouchStart={() => handlePressStart(movie)} // 모바일 터치 시작 시 타이머 시작
+              onTouchEnd={handlePressEnd} // 모바일 터치 종료 시 타이머 초기화
             />
             <LikeButton
               movie={movie}
