@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import MenuIcon from "@mui/icons-material/Menu";
 
 function Header() {
   const navigate = useNavigate();
@@ -124,13 +125,6 @@ function Header() {
       fontSize: "1.1rem",
       cursor: "pointer",
     },
-    menuButton: {
-      background: "none",
-      border: "none",
-      color: "white",
-      fontSize: "1.1rem",
-      cursor: "pointer",
-    },
     rightNav: {
       display: "flex",
       alignItems: "center",
@@ -197,6 +191,21 @@ function Header() {
       color: "#007bff",
       cursor: "pointer",
     },
+    menuButton: {
+      // 햄버거 모양의 메뉴버튼
+      backgroundColor: "#6200ea",
+      color: "white",
+      border: "none",
+      borderRadius: "50%",
+      width: "50px",
+      height: "50px",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      cursor: "pointer",
+      boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.2)",
+      fontSize: "24px",
+    },
   };
 
   return (
@@ -233,9 +242,8 @@ function Header() {
         {/* 모바일 환경에서 메뉴 버튼 */}
         {isMobile && (
           <>
-            <button onClick={toggleMenu} style={styles.menuButton}>
-              메뉴
-            </button>
+            <MenuIcon onClick={toggleMenu} style={{ fontSize: "24px" }} />{" "}
+            {/* 햄버거 아이콘 */}
             {showMenu && (
               <ul style={styles.dropdownMenu}>
                 <li>
