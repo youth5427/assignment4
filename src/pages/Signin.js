@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { CSSTransition } from "react-transition-group"; // 애니메이션 라이브러리
-import Footer from "../components/Footer";
+import Footer from "../components/FooterSignin";
 import styled from "styled-components";
 import axios from "axios"; // axios 추가
 import "../components/SigninAnimation.css"; // 애니메이션 스타일 추가

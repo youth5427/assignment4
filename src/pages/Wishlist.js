@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import Header from "../components/Header";
 import MovieRow from "../components/MovieRow";
+import Footer from "../components/Footer";
 
 // 스타일 정의
 const WishlistContainer = styled.div`
@@ -44,6 +45,7 @@ function Wishlist() {
           위시리스트에 저장된 영화가 없습니다.
         </p>
       )}
+      <Footer />
     </WishlistContainer>
   );
 }
