@@ -68,6 +68,11 @@ const ScrollButton = styled.button`
     right: -10px;
   }
 `;
+const LikeButtonWrapper = styled.div`
+  position: absolute;
+  top: 10px;
+  right: 10px;
+`;
 
 function MovieRow({
   title,
@@ -167,12 +172,14 @@ function MovieRow({
               onTouchStart={() => handlePressStart(movie)} // 모바일 터치 시작 시 타이머 시작
               onTouchEnd={handlePressEnd} // 모바일 터치 종료 시 타이머 초기화
             />
-            <LikeButton
-              movie={movie}
-              style={{ position: "absolute", top: "10px", right: "10px" }}
-              size="30px"
-              fontSize="1rem"
-            />
+            <LikeButtonWrapper>
+              <LikeButton
+                movie={movie}
+                // style={{ position: "absolute", top: "10px", right: "10px" }}
+                // size="30px"
+                // fontSize="1rem"
+              />
+            </LikeButtonWrapper>
           </MovieThumbnailWrapper>
         ))}
       </MovieThumbnails>

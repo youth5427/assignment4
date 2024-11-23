@@ -1,5 +1,26 @@
 import React, { useEffect, useState } from "react";
+import styled from "styled-components";
+import BookmarkIcon from "@mui/icons-material/Bookmark"; // 북마크 아이콘
 
+const Fab = styled.button`
+  background-color: ${(props) =>
+    props.isLiked ? "#f57c00" : "rgba(255, 255, 255, 0.8)"};
+  color: black;
+  border: none;
+  border-radius: 30%;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  font-size: 24px;
+
+  &:hover {
+    background-color: #f57c00;
+  }
+`;
 const LikeButton = ({
   movie,
   style = {},
@@ -47,26 +68,30 @@ const LikeButton = ({
   };
 
   return (
-    <button
-      onClick={handleLike}
-      style={{
-        backgroundColor: isLiked
-          ? "rgba(255, 255, 0, 1)"
-          : "rgba(255, 255, 255, 0.8)",
-        border: "none",
-        borderRadius: "50%",
-        width: size,
-        height: size,
-        fontSize: fontSize,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        cursor: "pointer",
-        ...style,
-      }}
-    >
-      ❤
-    </button>
+    // <button
+    //   onClick={handleLike}
+    //   style={{
+    //     backgroundColor: isLiked
+    //       ? "rgba(255, 255, 0, 1)"
+    //       : "rgba(255, 255, 255, 0.8)",
+    //     border: "none",
+    //     borderRadius: "50%",
+    //     width: size,
+    //     height: size,
+    //     fontSize: fontSize,
+    //     display: "flex",
+    //     alignItems: "center",
+    //     justifyContent: "center",
+    //     cursor: "pointer",
+    //     ...style,
+    //   }}
+    // >
+    //   ❤
+    // </button>
+
+    <Fab onClick={handleLike} isLiked={isLiked}>
+      <BookmarkIcon style={{ fontSize: fontSize }} />
+    </Fab>
   );
 };
 
