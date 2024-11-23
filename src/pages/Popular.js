@@ -4,6 +4,7 @@ import axios from "axios";
 import Header from "../components/Header";
 import TableView from "../components/TableView";
 import InfinityScrollView from "../components/InfinityScrollView";
+import Footer from "../components/Footer";
 
 const PageContainer = styled.div`
   margin-top: 100px; /* Header로부터 10px 떨어지도록 설정 */
@@ -155,6 +156,7 @@ function Popular() {
           loading={loading}
         />
       )}
+      <Footer />
     </PageContainer>
   );
 }

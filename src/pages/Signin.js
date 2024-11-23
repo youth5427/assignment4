@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Footer from "../components/Footer";
+import { CSSTransition } from "react-transition-group"; // 애니메이션 라이브러리
+import Footer from "../components/FooterSignin";
 import styled from "styled-components";
 import axios from "axios"; // axios 추가
+import "../components/SigninAnimation.css"; // 애니메이션 스타일 추가
 
 // 스타일 정의
 const Container = styled.div`
@@ -139,7 +141,7 @@ const validatePasswordWithAPI = async (password) => {
     return false; // 실패 시 false 반환
   }
 };
-function Signin({ onLogin }) {
+const Signin = ({ onLogin }) => {
   const [isSignup, setIsSignup] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -158,7 +160,6 @@ function Signin({ onLogin }) {
         setIsLoading(false);
         return;
       }
-      // 비밀번호(API 키) 유효성 검사
       const isValidPassword = await validatePasswordWithAPI(password);
 
       if (!isValidPassword) {
@@ -166,27 +167,21 @@ function Signin({ onLogin }) {
         setIsLoading(false);
         return;
       }
-      // 계정 중복 확인
-      if (email && password) {
-        const users = JSON.parse(localStorage.getItem("users")) || [];
-        const userExists = users.some((user) => user.email === email);
-        if (userExists) {
-          setMessage("이미 존재하는 이메일입니다.");
-          setIsLoading(false);
-          return;
-        }
-
-        const newUser = { email, password };
-        users.push(newUser);
-        localStorage.setItem("users", JSON.stringify(users));
-        setMessage("회원가입이 완료되었습니다!");
-        setIsSignup(false);
-        clearFields();
+      const users = JSON.parse(localStorage.getItem("users")) || [];
+      const userExists = users.some((user) => user.email === email);
+      if (userExists) {
+        setMessage("이미 존재하는 이메일입니다.");
         setIsLoading(false);
-      } else {
-        setMessage("모든 필드를 입력해 주세요.");
-        setIsLoading(false);
+        return;
       }
+
+      const newUser = { email, password };
+      users.push(newUser);
+      localStorage.setItem("users", JSON.stringify(users));
+      setMessage("회원가입이 완료되었습니다!");
+      setIsSignup(false);
+      clearFields();
+      setIsLoading(false);
     }, 1000);
   };
 
@@ -207,7 +202,7 @@ function Signin({ onLogin }) {
         onLogin(user.email);
         setMessage("로그인 성공!");
         setIsLoading(false);
-        navigate("/Home", { replace: true }); // 정확한 타이밍에 리디렉션
+        navigate("/Home", { replace: true });
       } else {
         setMessage("사용자 이름 또는 비밀번호가 잘못되었습니다.");
         setIsLoading(false);
@@ -228,28 +223,33 @@ function Signin({ onLogin }) {
       ) : (
         <Background>
           <Container>
-            <Title>{isSignup ? "회원가입" : "로그인"}</Title>
-            <Form onSubmit={isSignup ? handleSignup : handleLogin}>
-              <Label htmlFor="email">Email</Label>
-              <Input
-                type="text"
-                id="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                placeholder="Enter your email"
-              />
-              <Label htmlFor="password">Password</Label>
-              <Input
-                type="password"
-                id="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                placeholder="Enter your password"
-              />
-              {isSignup && (
-                <>
+            <CSSTransition
+              in={isSignup}
+              timeout={300}
+              classNames="form-slide"
+              unmountOnExit
+            >
+              <div>
+                <Title>회원가입</Title>
+                <Form onSubmit={handleSignup}>
+                  <Label htmlFor="email">Email</Label>
+                  <Input
+                    type="text"
+                    id="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                    placeholder="Enter your email"
+                  />
+                  <Label htmlFor="password">Password</Label>
+                  <Input
+                    type="password"
+                    id="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                    placeholder="Enter your password"
+                  />
                   <Label htmlFor="confirmPassword">Confirm Password</Label>
                   <Input
                     type="password"
@@ -259,10 +259,43 @@ function Signin({ onLogin }) {
                     required
                     placeholder="Confirm your password"
                   />
-                </>
-              )}
-              <Button type="submit">{isSignup ? "Sign Up" : "Sign In"}</Button>
-            </Form>
+                  <Button type="submit">Sign Up</Button>
+                </Form>
+              </div>
+            </CSSTransition>
+
+            <CSSTransition
+              in={!isSignup}
+              timeout={300}
+              classNames="form-slide"
+              unmountOnExit
+            >
+              <div>
+                <Title>로그인</Title>
+                <Form onSubmit={handleLogin}>
+                  <Label htmlFor="email">Email</Label>
+                  <Input
+                    type="text"
+                    id="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                    placeholder="Enter your email"
+                  />
+                  <Label htmlFor="password">Password</Label>
+                  <Input
+                    type="password"
+                    id="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                    placeholder="Enter your password"
+                  />
+                  <Button type="submit">Sign In</Button>
+                </Form>
+              </div>
+            </CSSTransition>
+
             {message && <p>{message}</p>}
             <LinkText
               onClick={() => {
@@ -275,12 +308,12 @@ function Signin({ onLogin }) {
                 ? "이미 계정이 있나요? 로그인"
                 : "계정이 없나요? 회원가입"}
             </LinkText>
-            <Footer />
           </Container>
+          <Footer />
         </Background>
       )}
     </>
   );
-}
+};
 
 export default Signin;
