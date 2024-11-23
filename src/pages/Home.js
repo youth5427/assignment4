@@ -4,6 +4,7 @@ import axios from "axios"; // axios 추가
 import Banner from "../components/Banner";
 import MovieRow from "../components/MovieRow";
 import Header from "../components/Header";
+import Footer from "../components/Footer";
 
 // 스타일 정의
 const HomeContainer = styled.div`
@@ -78,6 +79,7 @@ function Home() {
           params={{ with_genres: 28 }}
         />
       </Section>
+      <Footer />
     </HomeContainer>
   );
 }

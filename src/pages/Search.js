@@ -5,6 +5,7 @@ import axios from "axios";
 import Header from "../components/Header";
 import TableView from "../components/TableView";
 import InfinityScrollView from "../components/InfinityScrollView";
+import Footer from "../components/Footer";
 
 const PageContainer = styled.div`
   margin-top: 100px;
@@ -321,6 +322,7 @@ function Search() {
           loading={loading}
         />
       )}
+      <Footer />
     </PageContainer>
   );
 }
