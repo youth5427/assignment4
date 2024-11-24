@@ -8,8 +8,10 @@ const Fab = styled.button`
   color: black;
   border: none;
   border-radius: 30%;
-  width: 30px;
-  height: 30px;
+  width: 30px; /* 버튼 너비 고정 */
+  height: 30px; /* 버튼 높이 고정 */
+  min-width: 30px; /* 최소 너비 설정 */
+  min-height: 30px; /* 최소 높이 설정 */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -19,6 +21,12 @@ const Fab = styled.button`
 
   &:hover {
     background-color: #f57c00;
+  }
+  /* 모바일 환경에서도 동일한 높이를 유지하도록 추가 */
+  @media (max-width: 768px) {
+    width: 30px;
+    height: 30px;
+    font-size: 24px;
   }
 `;
 const LikeButton = ({
