@@ -28,6 +28,9 @@ const BannerContent = styled.div`
 const Title = styled.h2`
   margin-bottom: 10px;
   font-size: 2rem;
+  @media (max-width: 768px) {
+    text-align: center; /* 중앙 정렬 */
+  }
 `;
 
 const Button = styled.button`
@@ -58,6 +61,15 @@ const Overview = styled.p`
   line-height: 1.4;
   color: #ddd;
   max-width: 40%;
+  @media (max-width: 768px) {
+    background-color: rgba(109, 109, 110, 0.5);
+    font-size: 0.8rem; /* 글자 크기 줄임 */
+    text-align: center; /* 중앙 정렬 */
+    max-width: 90%; /* 가로 너비 확장 */
+    border-radius: 5px;
+    padding: 5px 10px;
+    box-sizing: border-box; /* 패딩을 포함하여 요소 크기를 계산 */
+  }
 `;
 
 const ButtonContainer = styled.div`
@@ -68,16 +80,6 @@ const ButtonContainer = styled.div`
 
 function Banner({ featuredMovie }) {
   const [isSmallScreen, setIsSmallScreen] = useState(false);
-
-  useEffect(() => {
-    const handleResize = () => {
-      setIsSmallScreen(window.innerWidth < 768);
-    };
-
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
 
   if (!featuredMovie) return null;
 
@@ -103,7 +105,7 @@ function Banner({ featuredMovie }) {
       />
       <BannerContent>
         <Title>{featuredMovie.title}</Title>
-        {!isSmallScreen && <Overview>{featuredMovie.overview}</Overview>}
+        <Overview>{featuredMovie.overview}</Overview>
         <ButtonContainer>
           <Button onClick={handlePlayClick}>재생</Button>
           <Button onClick={handleDetailsClick}>상세 정보</Button>
