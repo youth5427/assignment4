@@ -20,6 +20,7 @@ function Wishlist() {
   const [wishlistMovies, setWishlistMovies] = useState([]);
 
   useEffect(() => {
+    window.scrollTo(0, 0); // 페이지 이동 시 상단으로 스크롤
     const currentUser = localStorage.getItem("currentUser");
     if (currentUser) {
       const userWishlist =
@@ -41,7 +42,18 @@ function Wishlist() {
           />
         </Section>
       ) : (
-        <p style={{ padding: "20px", fontSize: "1.2rem", color: "gray" }}>
+        <p
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "flex-start", // 상단 정렬
+            height: "100vh",
+            fontSize: "1.2rem",
+            color: "gray",
+            textAlign: "center",
+            paddingTop: "30px", // 상단에서 20px 떨어지도록 설정
+          }}
+        >
           위시리스트에 저장된 영화가 없습니다.
         </p>
       )}

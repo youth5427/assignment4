@@ -1,70 +1,95 @@
-# Getting Started with Create React App
+# Assignment 2 - 영화 웹 애플리케이션
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+이 프로젝트는 [TMDB API](https://developers.themoviedb.org/3)와 React를 사용하여 영화 정보를 제공하는 웹 애플리케이션입니다. 아래의 페이지들로 구성되어 있습니다.
 
-## Available Scripts
+## 목차
 
-In the project directory, you can run:
+- [소개](#소개)
+- [기능](#기능)
+- [페이지 구성](#페이지-구성)
+- [API 키 설정](#api-키-설정)
+- [설치 및 실행](#설치-및-실행)
 
-### `npm start`
+---
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## 소개
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+이 웹 애플리케이션은 사용자가 영화 정보를 탐색, 검색, 위시리스트 저장 등의 기능을 수행할 수 있도록 설계되었습니다. 프로젝트는 [youth5427.github.io/assignment2/](https://youth5427.github.io/assignment2/)에서 확인할 수 있습니다.
 
-### `npm test`
+---
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## 기능
 
-### `npm run build`
+- **영화 탐색**: 인기 영화 및 최신 영화를 확인할 수 있습니다.
+- **검색**: 원하는 영화 제목 또는 조건으로 영화를 검색할 수 있습니다.
+- **위시리스트**: 영화 썸네일 상단의 북마크 버튼을 통해 관심 있는 영화를 저장하고 확인할 수 있습니다.
+- **사용자 인증**: 로그인 및 회원가입을 통해 사용자 맞춤 기능(개별 검색기록 및 위시리스트) 제공.
+- **영화 정보 제공**: 영화 썸네일을 길게 눌러 검색 포털에서 해당 영화에 대한 정보를 확인할 수 있습니다.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+---
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## 페이지 구성
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+1. **Home (홈 화면)**
+   - 주요 영화 배너와 인기 영화, 최신 영화, 액션 영화와 같은 섹션으로 구성되어 있습니다.
+   - 관련 파일: `Home.js`
+   - 관련 컴포넌트 파일: `Banner.js`, `MovieRow.js`, `Header.js`, `Footer.js`
+2. **Popular (인기 영화)**
 
-### `npm run eject`
+   - 인기 영화 목록을 테이블 뷰와 무한 스크롤 뷰로 확인할 수 있습니다.
+   - 관련 파일: `Popular.js`
+   - 관련 컴포넌트 파일: `Header.js`, `tableView.js`, `InfinityScrollView.js`, `Footer.js`
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+3. **Search (검색)**
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+   - 영화 제목, 장르, 평점, 기타 기준으로 정렬이 가능합니다.
+   - 테이블 뷰와 무한 스크롤 뷰로 확인할 수 있습니다.
+   - Header를 통해 검색이 가능합니다.
+   - 검색 기능 사용시 정렬 기능은 비활성화 됩니다.
+   - 관련 파일: `Search.js`
+   - 관련 컴포넌트 파일: `Header.js`, `tableView.js`, `InfinityScrollView.js`, `Footer.js`
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+4. **Signin (로그인 및 회원가입)**
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+   - 사용자 인증 및 계정 관리 페이지입니다.
+   - 관련 파일: `Signin.js`
+   - 관련 컴포넌트 파일: `FooterSignin.js`, `SigninAnimation.js`
 
-## Learn More
+5. **Wishlist (위시리스트)**
+   - 사용자가 저장한 영화의 목록을 확인할 수 있습니다.
+   - 관련 파일: `Wishlist.js`
+   - 관련 컴포넌트 파일: `Header.js`, `MovieRow.js`, `Footer.js`
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+---
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## API 키 설정
 
-### Code Splitting
+- 회원가입 시 비밀번호 입력란에 API 키를 입력하여 계정을 생성합니다.
+- API 키는 [TMDB 웹사이트](https://developers.themoviedb.org/3)에서 제공 받을 수 있습니다.
+- 입력한 API 키는 유효성 검사를 거칩니다.
+- 유효한 API 키가 아닌 경우 회원가입이 진행되지 않습니다.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+---
 
-### Analyzing the Bundle Size
+## 설치 및 실행
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+### 1. 프로젝트 클론
 
-### Making a Progressive Web App
+```bash
+git clone https://github.com/youth5427/assignment2.git
+cd assignment2
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+### 2. 의존성 설치
 
-### Advanced Configuration
+```bash
+npm install
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+### 3. 개발 서버 실행
 
-### Deployment
+```bash
+npm start
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+브라우저에서 http://localhost:3000으로 접속합니다.

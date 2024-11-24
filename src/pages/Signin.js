@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link, useLocation } from "react-router-dom";
 import { CSSTransition } from "react-transition-group"; // 애니메이션 라이브러리
 import Footer from "../components/FooterSignin";
 import styled from "styled-components";
@@ -142,19 +142,30 @@ const validatePasswordWithAPI = async (password) => {
   }
 };
 const Signin = ({ onLogin }) => {
-  const [isSignup, setIsSignup] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
+  // URL 쿼리 파라미터를 읽어 초기 상태 설정
+  const queryParams = new URLSearchParams(location.search);
+  const initialMode = queryParams.get("mode") === "signup";
+
+  const [isSignup, setIsSignup] = useState(initialMode);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [message, setMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const navigate = useNavigate();
+  const [isAgreed, setIsAgreed] = useState(false); // 약관 동의 상태
 
   const handleSignup = (e) => {
     e.preventDefault();
     setIsLoading(true);
 
     setTimeout(async () => {
+      if (!isAgreed) {
+        setMessage("약관에 동의해야 회원가입이 가능합니다.");
+        setIsLoading(false);
+        return;
+      }
       if (password !== confirmPassword) {
         setMessage("비밀번호가 일치하지 않습니다.");
         setIsLoading(false);
@@ -259,6 +270,23 @@ const Signin = ({ onLogin }) => {
                     required
                     placeholder="Confirm your password"
                   />
+                  <div style={{ textAlign: "left", marginBottom: "1rem" }}>
+                    <input
+                      type="checkbox"
+                      id="terms"
+                      checked={isAgreed}
+                      onChange={(e) => setIsAgreed(e.target.checked)}
+                    />
+                    <label
+                      htmlFor="terms"
+                      style={{ marginLeft: "0.5rem", fontSize: "0.9rem" }}
+                    >
+                      <span>
+                        <Link to="/Terms">이용약관</Link>
+                      </span>
+                      에 동의합니다.
+                    </label>
+                  </div>
                   <Button type="submit">Sign Up</Button>
                 </Form>
               </div>

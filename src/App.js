@@ -12,6 +12,7 @@ import Wishlist from "./pages/Wishlist";
 import Popular from "./pages/Popular";
 import Search from "./pages/Search";
 import ProtectedRoute from "./components/ProtectedRoute";
+import Terms from "./components/Terms";
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -68,6 +69,8 @@ function App() {
               )
             }
           />
+          <Route path="/Terms" element={<Terms />} />
+
           <Route
             path="/Home"
             element={
