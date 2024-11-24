@@ -110,6 +110,7 @@ function Header() {
       display: "flex",
       flexDirection: "row",
       gap: "20px",
+      animation: "fadeIn 0.5s ease-in-out", // 애니메이션 추가
     },
     logoutButton: {
       background: "none",
@@ -145,6 +146,7 @@ function Header() {
       zIndex: 1000,
       width: "150px",
       boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
+      animation: "slideDown 0.5s ease-in-out", // 슬라이드 다운 애니메이션 추가
     },
     searchContainer: {
       position: "relative",
@@ -207,6 +209,33 @@ function Header() {
       fontSize: "24px",
     },
   };
+  // 글로벌 CSS 추가
+  const globalStyles = `
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes slideDown {
+    from {
+      transform: translateY(-20px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+`;
+  // 글로벌 스타일을 페이지에 추가
+  const styleSheet = document.createElement("style");
+  styleSheet.type = "text/css";
+  styleSheet.innerText = globalStyles;
+  document.head.appendChild(styleSheet);
 
   return (
     <header style={styles.header}>
@@ -217,7 +246,11 @@ function Header() {
             <ul style={styles.navLinks}>
               <li>
                 <Link to="/Home" style={styles.navLink}>
-                  홈
+                  <img
+                    src={`${process.env.PUBLIC_URL}/icon.webp`} // // public 폴더에 저장된 파일 경로
+                    alt="홈"
+                    style={{ width: "24px", height: "24px" }} // 이미지 크기 조정
+                  />
                 </Link>
               </li>
               <li>
