@@ -1,7 +1,7 @@
 # Assignment 4 - 영화 웹 애플리케이션 (with KAKAO Login)
 
 이 프로젝트는 [TMDB API](https://developers.themoviedb.org/3)와 React를 사용하여 영화 정보를 제공하는 웹 애플리케이션입니다. 아래의 페이지들로 구성되어 있습니다.
-이존 프로젝트에서 카카오 로그인 기능이 추가되었습니다.
+이전 프로젝트에서 카카오 로그인 기능이 추가되었습니다.
 이전 프로젝트는 [Assignment2](https://github.com/youth5427/assignment2)에서 확인할 수 있습니다.
 
 ## 목차
@@ -74,6 +74,15 @@
   REACT_APP_KAKAO_API_KEY = your_KAKAO_API_KEY
   REACT_APP_API_KEY = your_TMDB_API_KEY
   REACT_APP_KAKAO_LOGOUT_REDIRECT_URI = http://localhost:3000/assignment4/
+```
+
+- [kakao deveolopers](https://developers.kakao.com/console/app/1177890/product/login/advanced)에서 Logout Redirect URI에 아래 주소를 추가하세요.
+
+```bash
+https://localhost:3000/assignment4/
+https://localhost:3000/assignment4
+http://localhost:3000/assignment4/
+http://localhost:3000/assignment4
 ```
 
 ---
