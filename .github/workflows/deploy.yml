@@ -5,31 +5,40 @@ on:
     branches:
       - master # master 브랜치에 푸시될 때 실행
 
+permissions:
+  contents: write # 리포지토리에 대한 쓰기 권한 부여
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
+      # 1. Checkout 코드
       - name: Checkout code
         uses: actions/checkout@v3
 
+      # 2. Set up Node.js
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: 16 # Node.js 버전 (프로젝트에 맞게 설정)
 
+      # 3. Export environment variables
       - name: Export environment variables
         run: |
           echo "REACT_APP_KAKAO_API_KEY=${{ secrets.REACT_APP_KAKAO_API_KEY }}" >> $GITHUB_ENV
           echo "REACT_APP_API_KEY=${{ secrets.REACT_APP_API_KEY }}" >> $GITHUB_ENV
 
+      # 4. Install dependencies
       - name: Install dependencies
         run: npm install
 
+      # 5. Build the project
       - name: Build the project
         run: |
           CI=false npm run build
 
+      # 6. Deploy to GitHub Pages
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
