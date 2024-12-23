@@ -11,6 +11,8 @@ function Header() {
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768); // 모바일 여부 판단
   const [showMenu, setShowMenu] = useState(false); // 모바일 메뉴 상태
   const getUserKey = (username) => `${username}_recentSearches`;
+  const kakao_api = process.env.REACT_APP_KAKAO_API_KEY;
+
   useEffect(() => {
     const storedUser = localStorage.getItem("currentUser");
     if (storedUser) {
@@ -34,46 +36,26 @@ function Header() {
   }, []);
 
   const handleLogout = () => {
-    // Kakao 로그아웃 및 연결 해제
-    if (window.Kakao && window.Kakao.Auth) {
-      window.Kakao.Auth.logout(() => {
-        console.log("Kakao logout successful");
-      });
-      window.Kakao.API.request({
-        url: "/v1/user/unlink",
-        success: (response) => {
-          console.log("Kakao unlink successful", response);
-        },
-        fail: (error) => {
-          console.error("Kakao unlink failed", error);
-        },
-      });
-    }
-
-    // 모든 쿠키 삭제
-    document.cookie.split(";").forEach((cookie) => {
-      const [name] = cookie.split("=");
-      document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
-    });
-
-    // 세션 스토리지 삭제
-    sessionStorage.clear();
-
-    // 자동 로그인을 방지를 위한 추가적인 캐시 삭제
-    if (navigator.credentials && navigator.credentials.preventSilentAccess) {
-      navigator.credentials.preventSilentAccess();
-    }
+    const kakaoLogoutUrl = `https://kauth.kakao.com/oauth/logout?client_id=${
+      process.env.REACT_APP_KAKAO_API_KEY
+    }&logout_redirect_uri=${encodeURIComponent(
+      process.env.REACT_APP_KAKAO_LOGOUT_REDIRECT_URI
+    )}`;
 
     // 로컬 스토리지 삭제 및 상태 초기화
-    localStorage.removeItem("isAuthenticated");
-    localStorage.removeItem("currentUser");
-    localStorage.removeItem("userPassword");
-    setCurrentUser(null);
+    localStorage.removeItem("isAuthenticated"); // 인증 상태 관련 정보 삭제
+    localStorage.removeItem("currentUser"); // 현재 사용자 정보 삭제
+    localStorage.removeItem("userPassword"); // 사용자 비밀번호 삭제 (저장된 경우)
+
+    setCurrentUser(null); // 애플리케이션 상태에서 현재 사용자 정보 초기화
+
+    // 브라우저 세션 만료를 위해 카카오 로그아웃 페이지로 리디렉션
+    window.location.href = kakaoLogoutUrl;
 
     // 사용자 알림 및 리다이렉트
-    alert("로그아웃이 완료되었습니다.");
-    navigate("/Signin");
-    window.location.reload();
+    alert("로그아웃이 완료되었습니다."); // 로그아웃 완료 알림
+    navigate("/Signin"); // 로그인 페이지로 리다이렉트
+    window.location.reload(); // 페이지 새로고침하여 상태 초기화
   };
 
   const handleSearch = () => {
