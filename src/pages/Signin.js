@@ -127,20 +127,7 @@ const Loading = () => (
     </div>
   </LoadingContainer>
 );
-const validatePasswordWithAPI = async (password) => {
-  try {
-    const response = await axios.get(
-      "https://api.themoviedb.org/3/movie/popular",
-      {
-        params: { api_key: password }, // 비밀번호를 API 키로 검증
-      }
-    );
-    return response.status === 200; // 요청 성공 시 true 반환
-  } catch (error) {
-    console.error("Invalid API key:", error);
-    return false; // 실패 시 false 반환
-  }
-};
+
 const Signin = ({ onLogin }) => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -171,13 +158,7 @@ const Signin = ({ onLogin }) => {
         setIsLoading(false);
         return;
       }
-      const isValidPassword = await validatePasswordWithAPI(password);
 
-      if (!isValidPassword) {
-        setMessage("올바른 API으로 가입해주세요.");
-        setIsLoading(false);
-        return;
-      }
       const users = JSON.parse(localStorage.getItem("users")) || [];
       const userExists = users.some((user) => user.email === email);
       if (userExists) {
