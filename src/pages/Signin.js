@@ -167,6 +167,7 @@ const Signin = ({ onLogin }) => {
 
   const handleKakaoLogin = () => {
     initializeKakao();
+
     window.Kakao.Auth.login({
       scope: "profile_nickname",
       success: (authObj) => {
