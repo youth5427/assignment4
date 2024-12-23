@@ -1,8 +1,8 @@
 {
-  "name": "assignment2",
+  "name": "assignment4",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://youth5427.github.io/assignment2",
+  "homepage": "https://youth5427.github.io/assignment4",
   "dependencies": {
     "@emotion/react": "^11.13.5",
     "@emotion/styled": "^11.13.5",
@@ -12,6 +12,7 @@
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
     "axios": "^1.7.7",
+    "dotenv": "^16.4.7",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.27.0",

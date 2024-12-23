@@ -34,10 +34,44 @@ function Header() {
   }, []);
 
   const handleLogout = () => {
+    // Kakao 로그아웃 및 연결 해제
+    if (window.Kakao && window.Kakao.Auth) {
+      window.Kakao.Auth.logout(() => {
+        console.log("Kakao logout successful");
+      });
+      window.Kakao.API.request({
+        url: "/v1/user/unlink",
+        success: (response) => {
+          console.log("Kakao unlink successful", response);
+        },
+        fail: (error) => {
+          console.error("Kakao unlink failed", error);
+        },
+      });
+    }
+
+    // 모든 쿠키 삭제
+    document.cookie.split(";").forEach((cookie) => {
+      const [name] = cookie.split("=");
+      document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+    });
+
+    // 세션 스토리지 삭제
+    sessionStorage.clear();
+
+    // 자동 로그인을 방지를 위한 추가적인 캐시 삭제
+    if (navigator.credentials && navigator.credentials.preventSilentAccess) {
+      navigator.credentials.preventSilentAccess();
+    }
+
+    // 로컬 스토리지 삭제 및 상태 초기화
     localStorage.removeItem("isAuthenticated");
     localStorage.removeItem("currentUser");
     localStorage.removeItem("userPassword");
     setCurrentUser(null);
+
+    // 사용자 알림 및 리다이렉트
+    alert("로그아웃이 완료되었습니다.");
     navigate("/Signin");
     window.location.reload();
   };
