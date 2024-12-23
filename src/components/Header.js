@@ -42,7 +42,7 @@ function Header() {
       process.env.REACT_APP_KAKAO_LOGOUT_REDIRECT_URI
     )}`;
 
-    // 로컬 스토리지 삭제 및 상태 초기화
+    // 로컬 스토리지 삭제, 상태 초기화
     localStorage.removeItem("isAuthenticated"); // 인증 상태 관련 정보 삭제
     localStorage.removeItem("currentUser"); // 현재 사용자 정보 삭제
     localStorage.removeItem("userPassword"); // 사용자 비밀번호 삭제 (저장된 경우)
