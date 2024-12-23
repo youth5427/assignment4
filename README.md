@@ -1,6 +1,8 @@
-# Assignment 2 - 영화 웹 애플리케이션
+# Assignment 4 - 영화 웹 애플리케이션 (with KAKAO Login)
 
 이 프로젝트는 [TMDB API](https://developers.themoviedb.org/3)와 React를 사용하여 영화 정보를 제공하는 웹 애플리케이션입니다. 아래의 페이지들로 구성되어 있습니다.
+이존 프로젝트에서 카카오 로그인 기능이 추가되었습니다.
+이전 프로젝트는 [Assignment2](https://github.com/youth5427/assignment2)에서 확인할 수 있습니다.
 
 ## 목차
 
@@ -14,7 +16,7 @@
 
 ## 소개
 
-이 웹 애플리케이션은 사용자가 영화 정보를 탐색, 검색, 위시리스트 저장 등의 기능을 수행할 수 있도록 설계되었습니다. 프로젝트는 [youth5427.github.io/assignment2/](https://youth5427.github.io/assignment2/)에서 확인할 수 있습니다.
+이 웹 애플리케이션은 사용자가 영화 정보를 탐색, 검색, 위시리스트 저장 등의 기능을 수행할 수 있도록 설계되었습니다. 프로젝트는 [youth5427.github.io/assignment4/](https://youth5427.github.io/assignment4/)에서 확인할 수 있습니다.
 
 ---
 
@@ -64,10 +66,15 @@
 
 ## API 키 설정
 
-- 회원가입 시 비밀번호 입력란에 API 키를 입력하여 계정을 생성합니다.
 - API 키는 [TMDB 웹사이트](https://developers.themoviedb.org/3)에서 제공 받을 수 있습니다.
-- 입력한 API 키는 유효성 검사를 거칩니다.
-- 유효한 API 키가 아닌 경우 회원가입이 진행되지 않습니다.
+- 배포된 사이트에는 API 키가 숨겨져 있습니다.
+- 추후 로컬에서 개발을 하고 싶다면, 해당 프로젝트의 root 디렉토리에 아래와 같이 구성된 .env.development 파일을 추가하십시오.
+
+```bash
+  REACT_APP_KAKAO_API_KEY = your_KAKAO_API_KEY
+  REACT_APP_API_KEY = your_TMDB_API_KEY
+  REACT_APP_KAKAO_LOGOUT_REDIRECT_URI = http://localhost:3000/assignment4/
+```
 
 ---
 
@@ -76,8 +83,8 @@
 ### 1. 프로젝트 클론
 
 ```bash
-git clone https://github.com/youth5427/assignment2.git
-cd assignment2
+git clone https://github.com/youth5427/assignment4.git
+cd assignment4
 ```
 
 ### 2. 의존성 설치
