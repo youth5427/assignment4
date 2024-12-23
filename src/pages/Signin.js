@@ -170,7 +170,7 @@ const Signin = ({ onLogin }) => {
     window.Kakao.Auth.login({
       scope: "profile_nickname",
       success: (authObj) => {
-        console.log("Kakao login successful", authObj);
+        console.log("Kakao 로그인 성공!!", authObj);
         window.Kakao.API.request({
           url: "/v2/user/me",
           success: (res) => {
@@ -187,8 +187,8 @@ const Signin = ({ onLogin }) => {
         });
       },
       fail: (err) => {
-        console.error("Kakao login failed", err);
-        setMessage("Kakao login failed.");
+        console.error("Kakao 로그인 실패!!", err);
+        setMessage("Kakao 로그인 실패!!");
       },
     });
   };
