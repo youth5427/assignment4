@@ -112,6 +112,21 @@ const Spinner = styled.div`
     }
   }
 `;
+const KakaoLoginButton = styled.button`
+  padding: 0.75rem;
+  font-size: 1rem;
+  background-color: #fee500;
+  color: #000;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 1rem;
+  margin-left: 1rem;
+
+  &:hover {
+    background-color: #ffd700;
+  }
+`;
 
 const LoadingMessage = styled.p`
   margin-top: 1rem;
@@ -142,6 +157,41 @@ const Signin = ({ onLogin }) => {
   const [message, setMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isAgreed, setIsAgreed] = useState(false); // 약관 동의 상태
+  const kakao_api = process.env.REACT_APP_KAKAO_API_KEY;
+
+  const initializeKakao = () => {
+    if (!window.Kakao.isInitialized()) {
+      window.Kakao.init(kakao_api); // 카카오에서 제공받은 JavaScript Key를 입력
+    }
+  };
+
+  const handleKakaoLogin = () => {
+    initializeKakao();
+    window.Kakao.Auth.login({
+      scope: "profile_nickname",
+      success: (authObj) => {
+        console.log("Kakao login successful", authObj);
+        window.Kakao.API.request({
+          url: "/v2/user/me",
+          success: (res) => {
+            console.log("Kakao API response", res);
+            const nickname = res.kakao_account.profile.nickname;
+            setMessage(`Welcome, ${nickname}!`);
+            onLogin(nickname);
+            navigate("/Home", { replace: true });
+          },
+          fail: (err) => {
+            console.error("Kakao API request failed", err);
+            setMessage("Failed to retrieve user information.");
+          },
+        });
+      },
+      fail: (err) => {
+        console.error("Kakao login failed", err);
+        setMessage("Kakao login failed.");
+      },
+    });
+  };
 
   const handleSignup = (e) => {
     e.preventDefault();
@@ -317,7 +367,12 @@ const Signin = ({ onLogin }) => {
                 ? "이미 계정이 있나요? 로그인"
                 : "계정이 없나요? 회원가입"}
             </LinkText>
+            <KakaoLoginButton onClick={handleKakaoLogin}>
+              Login with Kakao
+            </KakaoLoginButton>
+            {message && <p>{message}</p>}
           </Container>
+
           <Footer />
         </Background>
       )}

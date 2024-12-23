@@ -34,6 +34,11 @@ function Header() {
   }, []);
 
   const handleLogout = () => {
+    if (window.Kakao && window.Kakao.Auth) {
+      window.Kakao.Auth.logout(() => {
+        console.log("Kakao logout successful");
+      });
+    }
     localStorage.removeItem("isAuthenticated");
     localStorage.removeItem("currentUser");
     localStorage.removeItem("userPassword");
