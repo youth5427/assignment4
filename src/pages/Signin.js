@@ -182,13 +182,15 @@ const Signin = ({ onLogin }) => {
           },
           fail: (err) => {
             console.error("Kakao API request failed", err);
+            alert("Kakao API 호출에 실패했습니다.");
             setMessage("Failed to retrieve user information.");
           },
         });
       },
       fail: (err) => {
         console.error("Kakao 로그인 실패!!", err);
-        setMessage("Kakao 로그인 실패!!");
+        alert("Kakao 로그인 실패!! 네트워크 상태를 확인해주세요.");
+        setMessage("Kakao 로그인 실패!! 네트워크 상태를 확인해주세요.");
       },
     });
   };
