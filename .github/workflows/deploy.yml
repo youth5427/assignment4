@@ -23,7 +23,7 @@ jobs:
         with:
           node-version: 16 # Node.js 버전 (프로젝트에 맞게 설정)
 
-      # 3. Export environment variables
+      # 3. Export environment variables for production
       - name: Export environment variables
         run: |
           echo "REACT_APP_KAKAO_API_KEY=${{ secrets.REACT_APP_KAKAO_API_KEY }}" >> $GITHUB_ENV

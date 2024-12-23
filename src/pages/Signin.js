@@ -177,6 +177,7 @@ const Signin = ({ onLogin }) => {
           success: (res) => {
             console.log("Kakao API response", res);
             const nickname = res.kakao_account.profile.nickname;
+            console.log("Welcome, ", nickname);
             setMessage(`Welcome, ${nickname}!`);
             onLogin(nickname);
             navigate("/Home", { replace: true });
